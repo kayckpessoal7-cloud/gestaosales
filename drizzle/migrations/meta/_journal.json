@@ -15,6 +15,13 @@
       "when": 1789838899050,
       "tag": "0001_corrigir_semeadura",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789861080090,
+      "tag": "0002_criar_estrutura_financeira_barbearia",
+      "breakpoints": true
     }
   ]
 }
