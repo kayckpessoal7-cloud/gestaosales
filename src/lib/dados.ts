@@ -102,10 +102,13 @@ export function useCategorias() {
     queryFn: async (): Promise<Categoria[]> => {
       const { data, error } = await supabase
         .from("categorias")
-        .select("id, nome, tipo")
+        .select("id, nome, tipo, preco")
         .order("nome");
       if (error) throw error;
-      return (data ?? []) as Categoria[];
+      return (data ?? []).map((c) => ({
+        ...c,
+        preco: c.preco == null ? null : Number(c.preco),
+      })) as Categoria[];
     },
   });
 }
@@ -117,16 +120,18 @@ export function useSalvarCategoria() {
       id,
       nome,
       tipo,
+      preco,
     }: {
       id?: string;
       nome: string;
       tipo: TipoMovimentacao;
+      preco?: number | null;
     }) => {
       if (id) {
-        const { error } = await supabase.from("categorias").update({ nome }).eq("id", id);
+        const { error } = await supabase.from("categorias").update({ nome, preco }).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("categorias").insert({ nome, tipo });
+        const { error } = await supabase.from("categorias").insert({ nome, tipo, preco });
         if (error) throw error;
       }
     },
