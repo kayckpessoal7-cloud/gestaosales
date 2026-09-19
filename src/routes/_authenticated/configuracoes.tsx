@@ -65,6 +65,7 @@ function Configuracoes() {
   const salvarMeta = useSalvarMeta();
 
   const [novaCategoria, setNovaCategoria] = useState("");
+  const [precoCategoria, setPrecoCategoria] = useState("");
   const [tipoCategoria, setTipoCategoria] = useState<TipoMovimentacao>("entrada");
   const [novoBarbeiro, setNovoBarbeiro] = useState("");
   const [comissao, setComissao] = useState("40");
