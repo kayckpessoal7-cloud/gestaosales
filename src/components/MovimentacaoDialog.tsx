@@ -35,7 +35,7 @@ import {
   type TipoDespesa,
   type TipoMovimentacao,
 } from "@/lib/dados";
-import { hojeISO, valorParaNumero } from "@/lib/formato";
+import { formatarMoeda, hojeISO, valorParaNumero } from "@/lib/formato";
 
 interface Props {
   aberto: boolean;
