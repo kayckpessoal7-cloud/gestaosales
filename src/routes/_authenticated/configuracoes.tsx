@@ -65,6 +65,7 @@ function Configuracoes() {
   const salvarMeta = useSalvarMeta();
 
   const [novaCategoria, setNovaCategoria] = useState("");
+  const [precoCategoria, setPrecoCategoria] = useState("");
   const [tipoCategoria, setTipoCategoria] = useState<TipoMovimentacao>("entrada");
   const [novoBarbeiro, setNovoBarbeiro] = useState("");
   const [comissao, setComissao] = useState("40");
@@ -80,9 +81,18 @@ function Configuracoes() {
       toast.error("Digite o nome da categoria.");
       return;
     }
+    const preco =
+      tipoCategoria === "entrada" && precoCategoria.trim()
+        ? valorParaNumero(precoCategoria)
+        : null;
+    if (tipoCategoria === "entrada" && (preco == null || preco <= 0)) {
+      toast.error("Informe o preço do serviço.");
+      return;
+    }
     try {
-      await salvarCategoria.mutateAsync({ nome, tipo: tipoCategoria });
+      await salvarCategoria.mutateAsync({ nome, tipo: tipoCategoria, preco });
       setNovaCategoria("");
+      setPrecoCategoria("");
       toast.success("Categoria criada.");
     } catch {
       toast.error("Não foi possível criar a categoria.");
@@ -175,8 +185,21 @@ function Configuracoes() {
                 className="h-12"
               />
             </div>
+            {tipoCategoria === "entrada" && (
+              <div className="space-y-1">
+                <Label>Preço (R$)</Label>
+                <Input
+                  inputMode="decimal"
+                  value={precoCategoria}
+                  onChange={(e) => setPrecoCategoria(e.target.value)}
+                  placeholder="30,00"
+                  className="h-12 w-28"
+                />
+              </div>
+            )}
             <div className="space-y-1">
               <Label>Tipo</Label>
+
               <Select
                 value={tipoCategoria}
                 onValueChange={(v) => setTipoCategoria(v as TipoMovimentacao)}
@@ -198,7 +221,7 @@ function Configuracoes() {
           {(["entrada", "saida"] as TipoMovimentacao[]).map((tipo) => (
             <div key={tipo} className="space-y-2">
               <p className="text-xs font-semibold uppercase text-muted-foreground">
-                {tipo === "entrada" ? "Entradas" : "Saídas"}
+                {tipo === "entrada" ? "Serviços e preços" : "Saídas"}
               </p>
               <div className="flex flex-wrap gap-2">
                 {categorias
@@ -209,6 +232,9 @@ function Configuracoes() {
                       className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-sm"
                     >
                       {c.nome}
+                      {c.preco != null && (
+                        <strong className="text-entrada">{formatarMoeda(c.preco)}</strong>
+                      )}
                       <button
                         type="button"
                         aria-label={`Excluir ${c.nome}`}

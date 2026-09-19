@@ -46,6 +46,7 @@ export type Database = {
           criado_em: string
           id: string
           nome: string
+          preco: number | null
           tipo: Database["public"]["Enums"]["tipo_movimentacao"]
           user_id: string
         }
@@ -53,6 +54,7 @@ export type Database = {
           criado_em?: string
           id?: string
           nome: string
+          preco?: number | null
           tipo: Database["public"]["Enums"]["tipo_movimentacao"]
           user_id?: string
         }
@@ -60,6 +62,7 @@ export type Database = {
           criado_em?: string
           id?: string
           nome?: string
+          preco?: number | null
           tipo?: Database["public"]["Enums"]["tipo_movimentacao"]
           user_id?: string
         }

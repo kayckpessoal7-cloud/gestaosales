@@ -35,7 +35,7 @@ import {
   type TipoDespesa,
   type TipoMovimentacao,
 } from "@/lib/dados";
-import { hojeISO, valorParaNumero } from "@/lib/formato";
+import { formatarMoeda, hojeISO, valorParaNumero } from "@/lib/formato";
 
 interface Props {
   aberto: boolean;
@@ -64,6 +64,13 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
 
   const tipoAtual = movimentacao?.tipo ?? tipo;
   const categoriasDoTipo = categorias.filter((c) => c.tipo === tipoAtual);
+  const categoriaSelecionada = categoriasDoTipo.find((c) => c.nome === categoria);
+  /** Em entradas, o valor vem da tabela de preços da categoria escolhida. */
+  const precoTabela =
+    tipoAtual === "entrada" && categoriaSelecionada?.preco != null
+      ? Number(categoriaSelecionada.preco)
+      : null;
+  const usaTabela = tipoAtual === "entrada" && (categoria === "" || precoTabela != null);
 
   // Preenche o formulário ao abrir (novo cadastro ou edição)
   useEffect(() => {
@@ -94,17 +101,17 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
 
-    const numero = valorParaNumero(valor);
-    if (!valor.trim() || Number.isNaN(numero) || numero <= 0) {
+    if (!categoria) {
+      toast.error(tipoAtual === "entrada" ? "Escolha o serviço." : "Escolha uma categoria.");
+      return;
+    }
+    const numero = precoTabela != null ? precoTabela : valorParaNumero(valor);
+    if (Number.isNaN(numero) || numero <= 0) {
       toast.error("Informe um valor maior que zero.");
       return;
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) {
       toast.error("Informe uma data válida.");
-      return;
-    }
-    if (!categoria) {
-      toast.error("Escolha uma categoria.");
       return;
     }
 
@@ -154,17 +161,46 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
 
         <form onSubmit={enviar} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="valor">Valor (R$)</Label>
-            <Input
-              id="valor"
-              inputMode="decimal"
-              placeholder="0,00"
-              value={valor}
-              onChange={(e) => setValor(e.target.value)}
-              className="h-14 text-2xl font-semibold"
-              autoFocus
-            />
+            <Label>{tipoAtual === "entrada" ? "Serviço" : "Categoria"}</Label>
+            <Select value={categoria} onValueChange={setCategoria}>
+              <SelectTrigger className="h-12 w-full">
+                <SelectValue
+                  placeholder={
+                    tipoAtual === "entrada" ? "Escolha o serviço" : "Escolha a categoria"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {categoriasDoTipo.map((c) => (
+                  <SelectItem key={c.id} value={c.nome}>
+                    {c.nome}
+                    {c.preco != null ? ` — ${formatarMoeda(Number(c.preco))}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          {usaTabela ? (
+            <div className="rounded-lg border border-border bg-secondary/40 px-4 py-3">
+              <p className="text-xs uppercase text-muted-foreground">Valor do serviço</p>
+              <p className="text-2xl font-bold text-entrada">
+                {precoTabela != null ? formatarMoeda(precoTabela) : "—"}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="valor">Valor (R$)</Label>
+              <Input
+                id="valor"
+                inputMode="decimal"
+                placeholder="0,00"
+                value={valor}
+                onChange={(e) => setValor(e.target.value)}
+                className="h-14 text-2xl font-semibold"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
@@ -194,21 +230,6 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Categoria</Label>
-            <Select value={categoria} onValueChange={setCategoria}>
-              <SelectTrigger className="h-12 w-full">
-                <SelectValue placeholder="Escolha a categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoriasDoTipo.map((c) => (
-                  <SelectItem key={c.id} value={c.nome}>
-                    {c.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           {tipoAtual === "entrada" && (
             <div className="space-y-2">
