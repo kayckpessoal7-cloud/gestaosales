@@ -221,7 +221,7 @@ function Configuracoes() {
           {(["entrada", "saida"] as TipoMovimentacao[]).map((tipo) => (
             <div key={tipo} className="space-y-2">
               <p className="text-xs font-semibold uppercase text-muted-foreground">
-                {tipo === "entrada" ? "Entradas" : "Saídas"}
+                {tipo === "entrada" ? "Serviços e preços" : "Saídas"}
               </p>
               <div className="flex flex-wrap gap-2">
                 {categorias
@@ -232,6 +232,9 @@ function Configuracoes() {
                       className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-sm"
                     >
                       {c.nome}
+                      {c.preco != null && (
+                        <strong className="text-entrada">{formatarMoeda(c.preco)}</strong>
+                      )}
                       <button
                         type="button"
                         aria-label={`Excluir ${c.nome}`}
