@@ -14,16 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      barbeiros: {
+        Row: {
+          ativo: boolean
+          comissao: number
+          criado_em: string
+          id: string
+          nome: string
+          user_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          comissao?: number
+          criado_em?: string
+          id?: string
+          nome: string
+          user_id?: string
+        }
+        Update: {
+          ativo?: boolean
+          comissao?: number
+          criado_em?: string
+          id?: string
+          nome?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      categorias: {
+        Row: {
+          criado_em: string
+          id: string
+          nome: string
+          tipo: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          nome: string
+          tipo: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id?: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          nome?: string
+          tipo?: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      configuracoes: {
+        Row: {
+          atualizado_em: string
+          meta_mensal: number
+          user_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          meta_mensal?: number
+          user_id?: string
+        }
+        Update: {
+          atualizado_em?: string
+          meta_mensal?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      movimentacoes: {
+        Row: {
+          barbeiro_id: string | null
+          categoria: string
+          criado_em: string
+          data: string
+          descricao: string | null
+          despesa_tipo: Database["public"]["Enums"]["tipo_despesa"] | null
+          dia_vencimento: number | null
+          forma_pagamento: string
+          id: string
+          recorrente: boolean
+          tipo: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          barbeiro_id?: string | null
+          categoria: string
+          criado_em?: string
+          data: string
+          descricao?: string | null
+          despesa_tipo?: Database["public"]["Enums"]["tipo_despesa"] | null
+          dia_vencimento?: number | null
+          forma_pagamento: string
+          id?: string
+          recorrente?: boolean
+          tipo: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id?: string
+          valor: number
+        }
+        Update: {
+          barbeiro_id?: string | null
+          categoria?: string
+          criado_em?: string
+          data?: string
+          descricao?: string | null
+          despesa_tipo?: Database["public"]["Enums"]["tipo_despesa"] | null
+          dia_vencimento?: number | null
+          forma_pagamento?: string
+          id?: string
+          recorrente?: boolean
+          tipo?: Database["public"]["Enums"]["tipo_movimentacao"]
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentacoes_barbeiro_id_fkey"
+            columns: ["barbeiro_id"]
+            isOneToOne: false
+            referencedRelation: "barbeiros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      semear_dados_iniciais: { Args: never; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      tipo_despesa: "fixa" | "variavel"
+      tipo_movimentacao: "entrada" | "saida"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +275,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      tipo_despesa: ["fixa", "variavel"],
+      tipo_movimentacao: ["entrada", "saida"],
+    },
   },
 } as const
