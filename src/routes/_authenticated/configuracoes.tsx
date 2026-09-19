@@ -81,9 +81,18 @@ function Configuracoes() {
       toast.error("Digite o nome da categoria.");
       return;
     }
+    const preco =
+      tipoCategoria === "entrada" && precoCategoria.trim()
+        ? valorParaNumero(precoCategoria)
+        : null;
+    if (tipoCategoria === "entrada" && (preco == null || preco <= 0)) {
+      toast.error("Informe o preço do serviço.");
+      return;
+    }
     try {
-      await salvarCategoria.mutateAsync({ nome, tipo: tipoCategoria });
+      await salvarCategoria.mutateAsync({ nome, tipo: tipoCategoria, preco });
       setNovaCategoria("");
+      setPrecoCategoria("");
       toast.success("Categoria criada.");
     } catch {
       toast.error("Não foi possível criar a categoria.");
