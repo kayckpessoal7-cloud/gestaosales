@@ -101,17 +101,17 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault();
 
-    const numero = valorParaNumero(valor);
-    if (!valor.trim() || Number.isNaN(numero) || numero <= 0) {
+    if (!categoria) {
+      toast.error(tipoAtual === "entrada" ? "Escolha o serviço." : "Escolha uma categoria.");
+      return;
+    }
+    const numero = precoTabela != null ? precoTabela : valorParaNumero(valor);
+    if (Number.isNaN(numero) || numero <= 0) {
       toast.error("Informe um valor maior que zero.");
       return;
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) {
       toast.error("Informe uma data válida.");
-      return;
-    }
-    if (!categoria) {
-      toast.error("Escolha uma categoria.");
       return;
     }
 
