@@ -185,8 +185,21 @@ function Configuracoes() {
                 className="h-12"
               />
             </div>
+            {tipoCategoria === "entrada" && (
+              <div className="space-y-1">
+                <Label>Preço (R$)</Label>
+                <Input
+                  inputMode="decimal"
+                  value={precoCategoria}
+                  onChange={(e) => setPrecoCategoria(e.target.value)}
+                  placeholder="30,00"
+                  className="h-12 w-28"
+                />
+              </div>
+            )}
             <div className="space-y-1">
               <Label>Tipo</Label>
+
               <Select
                 value={tipoCategoria}
                 onValueChange={(v) => setTipoCategoria(v as TipoMovimentacao)}
