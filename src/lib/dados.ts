@@ -127,11 +127,17 @@ export function useSalvarCategoria() {
       tipo: TipoMovimentacao;
       preco?: number | null;
     }) => {
+      const precoFinal: number | null = preco ?? null;
       if (id) {
-        const { error } = await supabase.from("categorias").update({ nome, preco }).eq("id", id);
+        const { error } = await supabase
+          .from("categorias")
+          .update({ nome, preco: precoFinal })
+          .eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("categorias").insert({ nome, tipo, preco });
+        const { error } = await supabase
+          .from("categorias")
+          .insert({ nome, tipo, preco: precoFinal });
         if (error) throw error;
       }
     },
