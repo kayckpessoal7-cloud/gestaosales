@@ -161,17 +161,46 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
 
         <form onSubmit={enviar} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="valor">Valor (R$)</Label>
-            <Input
-              id="valor"
-              inputMode="decimal"
-              placeholder="0,00"
-              value={valor}
-              onChange={(e) => setValor(e.target.value)}
-              className="h-14 text-2xl font-semibold"
-              autoFocus
-            />
+            <Label>{tipoAtual === "entrada" ? "Serviço" : "Categoria"}</Label>
+            <Select value={categoria} onValueChange={setCategoria}>
+              <SelectTrigger className="h-12 w-full">
+                <SelectValue
+                  placeholder={
+                    tipoAtual === "entrada" ? "Escolha o serviço" : "Escolha a categoria"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {categoriasDoTipo.map((c) => (
+                  <SelectItem key={c.id} value={c.nome}>
+                    {c.nome}
+                    {c.preco != null ? ` — ${formatarMoeda(Number(c.preco))}` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+
+          {usaTabela ? (
+            <div className="rounded-lg border border-border bg-secondary/40 px-4 py-3">
+              <p className="text-xs uppercase text-muted-foreground">Valor do serviço</p>
+              <p className="text-2xl font-bold text-entrada">
+                {precoTabela != null ? formatarMoeda(precoTabela) : "—"}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="valor">Valor (R$)</Label>
+              <Input
+                id="valor"
+                inputMode="decimal"
+                placeholder="0,00"
+                value={valor}
+                onChange={(e) => setValor(e.target.value)}
+                className="h-14 text-2xl font-semibold"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
@@ -201,21 +230,6 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Categoria</Label>
-            <Select value={categoria} onValueChange={setCategoria}>
-              <SelectTrigger className="h-12 w-full">
-                <SelectValue placeholder="Escolha a categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoriasDoTipo.map((c) => (
-                  <SelectItem key={c.id} value={c.nome}>
-                    {c.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
           {tipoAtual === "entrada" && (
             <div className="space-y-2">
