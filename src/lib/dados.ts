@@ -27,6 +27,8 @@ export interface Categoria {
   id: string;
   nome: string;
   tipo: TipoMovimentacao;
+  /** Preço do serviço (apenas categorias de entrada). */
+  preco: number | null;
 }
 
 export interface Barbeiro {
