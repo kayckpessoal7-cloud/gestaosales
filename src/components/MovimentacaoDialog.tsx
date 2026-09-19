@@ -64,6 +64,13 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
 
   const tipoAtual = movimentacao?.tipo ?? tipo;
   const categoriasDoTipo = categorias.filter((c) => c.tipo === tipoAtual);
+  const categoriaSelecionada = categoriasDoTipo.find((c) => c.nome === categoria);
+  /** Em entradas, o valor vem da tabela de preços da categoria escolhida. */
+  const precoTabela =
+    tipoAtual === "entrada" && categoriaSelecionada?.preco != null
+      ? Number(categoriaSelecionada.preco)
+      : null;
+  const usaTabela = tipoAtual === "entrada" && (categoria === "" || precoTabela != null);
 
   // Preenche o formulário ao abrir (novo cadastro ou edição)
   useEffect(() => {
