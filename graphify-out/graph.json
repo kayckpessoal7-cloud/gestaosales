@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T23:40:13.547972+00:00",
+  "generated_at": "2026-09-28T23:42:45.424103+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -87,7 +87,7 @@
     },
     {
       "path": "src/lib/formato.ts",
-      "bytes": 3286
+      "bytes": 3669
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
