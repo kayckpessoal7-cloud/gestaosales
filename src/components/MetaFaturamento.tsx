@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { useConfiguracoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO } from "@/lib/formato";
 
-export function MetaFaturamento({ faturamento }: { faturamento: number }) {
+export function MetaFaturamento({ faturamento, ocultarValores = false }: { faturamento: number; ocultarValores?: boolean }) {
   const { data: config } = useConfiguracoes();
   const meta = config?.meta_mensal ?? 0;
 
@@ -27,7 +27,7 @@ export function MetaFaturamento({ faturamento }: { faturamento: number }) {
           <Target className="h-5 w-5 shrink-0 text-amber-500" />
           <p className="truncate text-sm font-semibold">Meta de faturamento — {mes}</p>
         </div>
-        {meta > 0 && (
+        {meta > 0 && !ocultarValores && (
           <p className="shrink-0 text-sm font-bold">
             {formatarMoeda(faturamento)} / {formatarMoeda(meta)}
           </p>
@@ -41,18 +41,22 @@ export function MetaFaturamento({ faturamento }: { faturamento: number }) {
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-valuenow={Math.round(barra)}
+            aria-valuenow={ocultarValores ? 0 : Math.round(barra)}
           >
-            <div
-              className="h-full rounded-full bg-amber-500 transition-all"
-              style={{ width: `${barra}%` }}
-            />
+            {!ocultarValores && (
+              <div
+                className="h-full rounded-full bg-amber-500 transition-all"
+                style={{ width: `${barra}%` }}
+              />
+            )}
           </div>
-          <p className="text-xs text-muted-foreground">
-            {percentual >= 100
-              ? `Meta batida! ${percentualTexto}% do objetivo 🎉`
-              : `${percentualTexto}% da meta atingida`}
-          </p>
+          {!ocultarValores && (
+            <p className="text-xs text-muted-foreground">
+              {percentual >= 100
+                ? `Meta batida! ${percentualTexto}% do objetivo 🎉`
+                : `${percentualTexto}% da meta atingida`}
+            </p>
+          )}
         </div>
       ) : (
         <p className="px-4 text-sm text-muted-foreground">
