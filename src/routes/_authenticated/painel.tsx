@@ -32,6 +32,7 @@ import {
 } from "@/lib/dados";
 import {
   formatarData,
+  formatarDataRelativa,
   formatarMoeda,
   hojeISO,
   inicioDaSemana,
@@ -346,7 +347,7 @@ function Painel() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{m.categoria}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {formatarData(m.data)} · {m.forma_pagamento}
+                    {formatarDataRelativa(m.data)} · {m.forma_pagamento}
                   </p>
                 </div>
                 <span
