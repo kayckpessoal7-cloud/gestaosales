@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T23:37:07.013891+00:00",
+  "generated_at": "2026-09-28T23:40:13.547972+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -359,7 +359,7 @@
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 11099
+      "bytes": 13903
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
@@ -1654,6 +1654,10 @@
     {
       "source": "src/routes/_authenticated/painel.tsx",
       "target": "@/components/MovimentacaoDialog"
+    },
+    {
+      "source": "src/routes/_authenticated/painel.tsx",
+      "target": "@/hooks/use-mobile"
     },
     {
       "source": "src/routes/_authenticated/painel.tsx",
