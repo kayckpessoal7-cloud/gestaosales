@@ -79,20 +79,27 @@ export function rotuloCurto(dataISO: string): string {
  * Compara apenas dia/mês/ano no fuso America/Cuiaba.
  */
 export function formatarDataRelativa(dataISO: string): string {
-  const fmt = new Intl.DateTimeFormat("pt-BR", {
+  const partes = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Cuiaba",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
-  const hojeStr = fmt.format(new Date());
+  }).formatToParts(new Date());
+  
+  const p = (t: string) => partes.find((x) => x.type === t)?.value ?? "00";
+  const cuiabaStr = `${p("year")}-${p("month")}-${p("day")}`;
   const dataFormatada = formatarData(dataISO);
-  if (dataFormatada === hojeStr) return "Hoje";
 
-  const ontem = new Date();
-  ontem.setDate(ontem.getDate() - 1);
-  const ontemStr = fmt.format(ontem);
-  if (dataFormatada === ontemStr) return "Ontem";
+  const dHoje = new Date(`${cuiabaStr}T00:00:00Z`);
+  const dData = new Date(`${dataISO}T00:00:00Z`);
+  const diffDias = Math.round((dHoje.getTime() - dData.getTime()) / 86400000);
+
+  if (diffDias === 0) return "Hoje";
+  if (diffDias === 1) return "Ontem";
+  if (diffDias >= 2 && diffDias <= 6) {
+    const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    return diasSemana[dData.getUTCDay()] ?? dataFormatada;
+  }
 
   return dataFormatada;
 }
