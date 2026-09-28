@@ -2,7 +2,7 @@
  * Lista de movimentações com ações de editar e excluir (com confirmação).
  */
 import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MovimentacaoDialog } from "@/components/MovimentacaoDialog";
 import { useBarbeiros, useExcluirMovimentacao, type Movimentacao } from "@/lib/dados";
-import { formatarData, formatarMoeda } from "@/lib/formato";
+import { formatarData, formatarDataRelativa, formatarMoeda } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
 export function ListaMovimentacoes({ itens }: { itens: Movimentacao[] }) {
@@ -26,6 +26,39 @@ export function ListaMovimentacoes({ itens }: { itens: Movimentacao[] }) {
   const excluir = useExcluirMovimentacao();
   const [editando, setEditando] = useState<Movimentacao | null>(null);
   const [excluindo, setExcluindo] = useState<Movimentacao | null>(null);
+  const [, setTick] = useState(0);
+
+  // Re-render à meia-noite (fuso America/Cuiaba) para atualizar Hoje/Ontem
+  useEffect(() => {
+    function msAteMeiaNoite(): number {
+      const agora = new Date();
+      const cuiaba = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Cuiaba",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }).formatToParts(agora);
+      const p = (t: string) => cuiaba.find((x) => x.type === t)?.value ?? "0";
+      const h = Number(p("hour"));
+      const m = Number(p("minute"));
+      const s = Number(p("second"));
+      const restante = ((23 - h) * 3600 + (59 - m) * 60 + (60 - s)) * 1000;
+      return restante > 0 ? restante : 1000;
+    }
+    let timer: ReturnType<typeof setTimeout>;
+    function agendar() {
+      timer = setTimeout(() => {
+        setTick((t) => t + 1);
+        agendar();
+      }, msAteMeiaNoite());
+    }
+    agendar();
+    return () => clearTimeout(timer);
+  }, []);
 
   const nomeBarbeiro = (id: string | null) => barbeiros.find((b) => b.id === id)?.nome;
 
@@ -60,7 +93,7 @@ export function ListaMovimentacoes({ itens }: { itens: Movimentacao[] }) {
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{m.categoria}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {formatarData(m.data)} · {m.forma_pagamento}
+                {formatarDataRelativa(m.data)} · {m.forma_pagamento}
                 {nomeBarbeiro(m.barbeiro_id) ? ` · ${nomeBarbeiro(m.barbeiro_id)}` : ""}
                 {m.despesa_tipo ? ` · ${m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}` : ""}
               </p>

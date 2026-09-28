@@ -73,3 +73,26 @@ export function formatarPercentual(valor: number): string {
 export function rotuloCurto(dataISO: string): string {
   return dataISO.slice(8, 10) + "/" + dataISO.slice(5, 7);
 }
+
+/**
+ * Retorna "Hoje", "Ontem" ou a data formatada DD/MM/AAAA.
+ * Compara apenas dia/mês/ano no fuso America/Cuiaba.
+ */
+export function formatarDataRelativa(dataISO: string): string {
+  const fmt = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Cuiaba",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const hojeStr = fmt.format(new Date());
+  const dataFormatada = formatarData(dataISO);
+  if (dataFormatada === hojeStr) return "Hoje";
+
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate() - 1);
+  const ontemStr = fmt.format(ontem);
+  if (dataFormatada === ontemStr) return "Ontem";
+
+  return dataFormatada;
+}
