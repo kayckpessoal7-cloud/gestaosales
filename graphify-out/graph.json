@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T23:23:53.071071+00:00",
+  "generated_at": "2026-09-28T23:37:07.013891+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -36,6 +36,10 @@
     {
       "path": ".lovable/project.json",
       "bytes": 124
+    },
+    {
+      "path": ".lovasiri/sync.json",
+      "bytes": 80
     },
     {
       "path": "src/routeTree.gen.ts",
@@ -75,7 +79,7 @@
     },
     {
       "path": "src/components/ListaMovimentacoes.tsx",
-      "bytes": 4334
+      "bytes": 5446
     },
     {
       "path": "src/lib/error-page.ts",
@@ -83,7 +87,7 @@
     },
     {
       "path": "src/lib/formato.ts",
-      "bytes": 2630
+      "bytes": 3286
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
