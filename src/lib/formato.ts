@@ -75,7 +75,8 @@ export function rotuloCurto(dataISO: string): string {
 }
 
 /**
- * Retorna "Hoje", "Ontem" ou a data formatada DD/MM/AAAA.
+ * Retorna "Hoje", "Ontem", nome do dia da semana (2–3 dias atrás)
+ * ou a data formatada DD/MM/AAAA (4+ dias atrás).
  * Compara apenas dia/mês/ano no fuso America/Cuiaba.
  */
 export function formatarDataRelativa(dataISO: string): string {
@@ -85,7 +86,7 @@ export function formatarDataRelativa(dataISO: string): string {
     month: "2-digit",
     day: "2-digit",
   }).formatToParts(new Date());
-  
+
   const p = (t: string) => partes.find((x) => x.type === t)?.value ?? "00";
   const cuiabaStr = `${p("year")}-${p("month")}-${p("day")}`;
   const dataFormatada = formatarData(dataISO);
@@ -96,7 +97,7 @@ export function formatarDataRelativa(dataISO: string): string {
 
   if (diffDias === 0) return "Hoje";
   if (diffDias === 1) return "Ontem";
-  if (diffDias >= 2 && diffDias <= 6) {
+  if (diffDias >= 2 && diffDias <= 3) {
     const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
     return diasSemana[dData.getUTCDay()] ?? dataFormatada;
   }

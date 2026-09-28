@@ -21,7 +21,7 @@ import { useBarbeiros, useExcluirMovimentacao, type Movimentacao } from "@/lib/d
 import { formatarData, formatarDataRelativa, formatarMoeda } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
-export function ListaMovimentacoes({ itens }: { itens: Movimentacao[] }) {
+export function ListaMovimentacoes({ itens, usarDataRelativa = true }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
   const { data: barbeiros = [] } = useBarbeiros();
   const excluir = useExcluirMovimentacao();
   const [editando, setEditando] = useState<Movimentacao | null>(null);
@@ -93,7 +93,7 @@ export function ListaMovimentacoes({ itens }: { itens: Movimentacao[] }) {
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{m.categoria}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {formatarDataRelativa(m.data)} · {m.forma_pagamento}
+                {usarDataRelativa ? formatarDataRelativa(m.data) : formatarData(m.data)} · {m.forma_pagamento}
                 {nomeBarbeiro(m.barbeiro_id) ? ` · ${nomeBarbeiro(m.barbeiro_id)}` : ""}
                 {m.despesa_tipo ? ` · ${m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}` : ""}
               </p>
