@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T23:54:16.894145+00:00",
+  "generated_at": "2026-09-28T23:57:57.820706+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -71,7 +71,11 @@
     },
     {
       "path": "src/components/MetaFaturamento.tsx",
-      "bytes": 2471
+      "bytes": 2673
+    },
+    {
+      "path": "src/components/ValorOcultavel.tsx",
+      "bytes": 607
     },
     {
       "path": "src/components/MovimentacaoDialog.tsx",
@@ -120,6 +124,10 @@
     {
       "path": "src/routes/index.tsx",
       "bytes": 1021
+    },
+    {
+      "path": "src/hooks/use-ocultar-valores.ts",
+      "bytes": 892
     },
     {
       "path": "src/hooks/use-mobile.tsx",
@@ -548,6 +556,10 @@
       "target": "@/lib/formato"
     },
     {
+      "source": "src/components/ValorOcultavel.tsx",
+      "target": "@/lib/utils"
+    },
+    {
       "source": "src/components/MovimentacaoDialog.tsx",
       "target": "react"
     },
@@ -710,6 +722,10 @@
     {
       "source": "src/routes/index.tsx",
       "target": "@/integrations/supabase/client"
+    },
+    {
+      "source": "src/hooks/use-ocultar-valores.ts",
+      "target": "react"
     },
     {
       "source": "src/hooks/use-mobile.tsx",
