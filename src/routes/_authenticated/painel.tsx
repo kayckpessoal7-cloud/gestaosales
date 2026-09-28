@@ -2,7 +2,7 @@
  * Painel inicial: visão geral do caixa da barbearia.
  */
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -17,7 +17,7 @@ import {
   YAxis,
 } from "recharts";
 import type { ContentType } from "recharts/types/component/Tooltip";
-import { AlertCircle, Minus, Plus } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Minus, Plus } from "lucide-react";
 
 import { MetaFaturamento } from "@/components/MetaFaturamento";
 import { MovimentacaoDialog } from "@/components/MovimentacaoDialog";
@@ -70,14 +70,53 @@ const CORES_PIZZA = [
   "oklch(0.8 0.1 60)",
 ];
 
+const VALOR_OCULTO = "R$\u00A0••••••";
+const VALOR_OCULTO_CURTO = "R$\u00A0••••";
+const LS_KEY = "painel:valores-ocultos";
+
+/** Hook reutilizável para esconder/mostrar valores financeiros. */
+function useOcultarValores() {
+  const [oculto, setOculto] = useState(() => {
+    try {
+      return localStorage.getItem(LS_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  const alternar = useCallback(() => {
+    setOculto((prev) => {
+      const novo = !prev;
+      try {
+        localStorage.setItem(LS_KEY, novo ? "1" : "0");
+      } catch {
+        /* noop */
+      }
+      return novo;
+    });
+  }, []);
+
+  /** Retorna o valor formatado ou mascarado. */
+  const formatar = useCallback(
+    (valor: number, curto = false) => (oculto ? (curto ? VALOR_OCULTO_CURTO : VALOR_OCULTO) : formatarMoeda(valor)),
+    [oculto],
+  );
+
+  return { oculto, alternar, formatar } as const;
+}
+
 function CardValor({
   titulo,
   valor,
   cor,
+  oculto,
+  formatar,
 }: {
   titulo: string;
   valor: number;
   cor?: "entrada" | "saida" | "saldo";
+  oculto: boolean;
+  formatar: (v: number, curto?: boolean) => string;
 }) {
   const classe =
     cor === "entrada"
@@ -97,7 +136,15 @@ function CardValor({
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4">
-        <p className={cn("text-xl font-bold sm:text-2xl", classe)}>{formatarMoeda(valor)}</p>
+        <p
+          className={cn(
+            "text-xl font-bold sm:text-2xl transition-opacity duration-200",
+            classe,
+            oculto && "select-none",
+          )}
+        >
+          {formatar(valor)}
+        </p>
       </CardContent>
     </Card>
   );
@@ -107,6 +154,7 @@ function Painel() {
   const { data: movimentacoes = [], isLoading } = useMovimentacoes();
   const [dialogo, setDialogo] = useState<TipoMovimentacao | null>(null);
   const isMobile = useIsMobile();
+  const { oculto, alternar, formatar } = useOcultarValores();
 
   const hoje = hojeISO();
   const resumo = useMemo(() => {
@@ -202,6 +250,15 @@ function Painel() {
           <h1 className="truncate text-xl font-bold sm:text-2xl">Painel</h1>
           <p className="truncate text-sm text-muted-foreground">Hoje é {formatarData(hoje)}</p>
         </div>
+        <button
+          type="button"
+          onClick={alternar}
+          title={oculto ? "Mostrar valores" : "Esconder valores"}
+          aria-label={oculto ? "Mostrar valores" : "Esconder valores"}
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d4a63c]/40 bg-[#1c1a14] text-[#d4a63c] transition-colors duration-200 hover:bg-[#d4a63c]/10 hover:border-[#d4a63c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a63c]/50"
+        >
+          {oculto ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        </button>
       </header>
 
       {/* Botões de acesso rápido */}
@@ -221,7 +278,7 @@ function Painel() {
       </div>
 
       {/* Meta de faturamento do mês */}
-      <MetaFaturamento faturamento={resumo.doMes} />
+      <MetaFaturamento faturamento={resumo.doMes} oculto={oculto} />
 
       {resumo.lembretes.length > 0 && (
         <Card className="border-primary/40 bg-primary/5 py-4">
@@ -240,26 +297,26 @@ function Painel() {
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-        <CardValor titulo="Faturamento hoje" valor={resumo.doDia} cor="entrada" />
-        <CardValor titulo="Faturamento semana" valor={resumo.daSemana} cor="entrada" />
-        <CardValor titulo="Faturamento mês" valor={resumo.doMes} cor="entrada" />
-        <CardValor titulo="Total recebido (mês)" valor={resumo.doMes} cor="entrada" />
-        <CardValor titulo="Total gasto (mês)" valor={resumo.gastoMes} cor="saida" />
-        <CardValor titulo="Saldo do mês" valor={resumo.saldoMes} cor="saldo" />
+        <CardValor titulo="Faturamento hoje" valor={resumo.doDia} cor="entrada" oculto={oculto} formatar={formatar} />
+        <CardValor titulo="Faturamento semana" valor={resumo.daSemana} cor="entrada" oculto={oculto} formatar={formatar} />
+        <CardValor titulo="Faturamento mês" valor={resumo.doMes} cor="entrada" oculto={oculto} formatar={formatar} />
+        <CardValor titulo="Total recebido (mês)" valor={resumo.doMes} cor="entrada" oculto={oculto} formatar={formatar} />
+        <CardValor titulo="Total gasto (mês)" valor={resumo.gastoMes} cor="saida" oculto={oculto} formatar={formatar} />
+        <CardValor titulo="Saldo do mês" valor={resumo.saldoMes} cor="saldo" oculto={oculto} formatar={formatar} />
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-2">
           <div className="space-y-1">
             <CardTitle className="text-base">Entradas x Saídas (últimos 30 dias)</CardTitle>
-            {resumo.temMovimentacao && (
+            {resumo.temMovimentacao && !oculto && (
               <p className="text-xs text-muted-foreground">
                 Total do período: {formatarMoeda(resumo.totalEntradas30 - resumo.totalSaidas30)}
                 {resumo.melhorDiaLabel ? ` · Melhor dia: ${resumo.melhorDiaLabel} (${formatarMoeda(resumo.melhorDiaValor)})` : ""}
               </p>
             )}
           </div>
-          {resumo.temMovimentacao && (
+          {resumo.temMovimentacao && !oculto && (
             <div className="flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1.5">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
@@ -273,7 +330,12 @@ function Painel() {
           )}
         </CardHeader>
         <CardContent className="px-2" style={{ height: 320 }}>
-          {resumo.temMovimentacao ? (
+          {oculto ? (
+            <div className="flex h-full flex-col items-center justify-center gap-2 transition-opacity duration-200">
+              <EyeOff className="h-10 w-10 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">Valores ocultos</p>
+            </div>
+          ) : resumo.temMovimentacao ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={resumo.dias}
@@ -406,6 +468,11 @@ function Painel() {
           <CardContent className="h-64">
             {resumo.despesas.length === 0 ? (
               <p className="text-sm text-muted-foreground">Nenhuma despesa registrada no mês.</p>
+            ) : oculto ? (
+              <div className="flex h-full flex-col items-center justify-center gap-2 transition-opacity duration-200">
+                <EyeOff className="h-10 w-10 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">Valores ocultos</p>
+              </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -457,11 +524,14 @@ function Painel() {
                 </div>
                 <span
                   className={cn(
-                    "shrink-0 text-sm font-semibold",
+                    "shrink-0 text-sm font-semibold transition-opacity duration-200",
                     m.tipo === "entrada" ? "text-entrada" : "text-saida",
+                    oculto && "select-none",
                   )}
                 >
-                  {m.tipo === "entrada" ? "+" : "−"} {formatarMoeda(m.valor)}
+                  {oculto
+                    ? VALOR_OCULTO_CURTO
+                    : `${m.tipo === "entrada" ? "+" : "−"} ${formatarMoeda(m.valor)}`}
                 </span>
               </div>
             ))}
