@@ -21,7 +21,7 @@ import { useBarbeiros, useExcluirMovimentacao, type Movimentacao } from "@/lib/d
 import { formatarData, formatarDataRelativa, formatarMoeda } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
-export function ListaMovimentacoes({ itens, usarDataRelativa = true }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
+export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
   const { data: barbeiros = [] } = useBarbeiros();
   const excluir = useExcluirMovimentacao();
   const [editando, setEditando] = useState<Movimentacao | null>(null);
@@ -30,6 +30,7 @@ export function ListaMovimentacoes({ itens, usarDataRelativa = true }: { itens: 
 
   // Re-render à meia-noite (fuso America/Cuiaba) para atualizar Hoje/Ontem
   useEffect(() => {
+    if (!usarDataRelativa) return;
     function msAteMeiaNoite(): number {
       const agora = new Date();
       const cuiaba = new Intl.DateTimeFormat("en-US", {
