@@ -20,6 +20,7 @@ import { AlertCircle, Minus, Plus } from "lucide-react";
 
 import { MetaFaturamento } from "@/components/MetaFaturamento";
 import { MovimentacaoDialog } from "@/components/MovimentacaoDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -103,6 +104,7 @@ function CardValor({
 function Painel() {
   const { data: movimentacoes = [], isLoading } = useMovimentacoes();
   const [dialogo, setDialogo] = useState<TipoMovimentacao | null>(null);
+  const isMobile = useIsMobile();
 
   const hoje = hojeISO();
   const resumo = useMemo(() => {
@@ -116,13 +118,22 @@ function Painel() {
 
     // Gráfico dos últimos 30 dias
     const inicio = somarDias(hoje, -29);
-    const dias: { dia: string; Entradas: number; Saídas: number }[] = [];
+    const dias: { dia: string; dataCompleta: string; Entradas: number; Saídas: number; Saldo: number; isHoje: boolean }[] = [];
+    let temMovimentacao = false;
     for (let i = 0; i < 30; i++) {
       const data = somarDias(inicio, i);
+      const isHoje = data === hoje;
+      const ent = somar(entradas.filter((m) => m.data === data));
+      const sai = somar(saidas.filter((m) => m.data === data));
+      if (ent > 0 || sai > 0) temMovimentacao = true;
+
       dias.push({
-        dia: rotuloCurto(data),
-        Entradas: somar(entradas.filter((m) => m.data === data)),
-        Saídas: somar(saidas.filter((m) => m.data === data)),
+        dia: isHoje ? "Hoje" : rotuloCurto(data),
+        dataCompleta: formatarData(data),
+        Entradas: ent,
+        Saídas: sai,
+        Saldo: ent - sai,
+        isHoje,
       });
     }
 
@@ -155,6 +166,7 @@ function Painel() {
       gastoMes,
       saldoMes: doMes - gastoMes,
       dias,
+      temMovimentacao,
       despesas,
       lembretes,
       ultimas: movimentacoes.slice(0, 10),
@@ -219,24 +231,64 @@ function Painel() {
           <CardTitle className="text-base">Entradas x Saídas (últimos 30 dias)</CardTitle>
         </CardHeader>
         <CardContent className="h-64 px-2">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={resumo.dias}>
-              <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.32 0.015 88)" />
-              <XAxis dataKey="dia" tick={{ fontSize: 10 }} interval={4} />
-              <YAxis tick={{ fontSize: 10 }} width={45} />
-              <Tooltip
-                formatter={(v: number) => formatarMoeda(v)}
-                contentStyle={{
-                  background: "oklch(0.22 0.01 90)",
-                  border: "1px solid oklch(0.32 0.015 88)",
-                  borderRadius: 8,
-                }}
-              />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="Entradas" fill="oklch(0.72 0.17 152)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Saídas" fill="oklch(0.65 0.2 25)" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {resumo.temMovimentacao ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={resumo.dias} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.32 0.015 88)" strokeOpacity={0.4} />
+                <XAxis
+                  dataKey="dia"
+                  tick={{ fontSize: 11 }}
+                  interval={isMobile ? 6 : 3}
+                  tickLine={false}
+                  axisLine={{ strokeOpacity: 0.2 }}
+                />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(v: number) => formatarMoeda(v).split(",")[0] ?? ""}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  cursor={{ fill: "oklch(0.32 0.015 88)", opacity: 0.1 }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length > 0) {
+                      const d = payload[0]?.payload;
+                      if (!d) return null;
+                      return (
+                        <div className="rounded-lg border border-border/50 bg-[#1a1814] p-3 text-sm shadow-xl text-white">
+                          <p className="mb-2 font-semibold">{d.dataCompleta} {d.isHoje && "(Hoje)"}</p>
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-entrada">Entradas</span>
+                              <span className="font-medium text-entrada">{formatarMoeda(d.Entradas)}</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-saida">Saídas</span>
+                              <span className="font-medium text-saida">{formatarMoeda(d.Saídas)}</span>
+                            </div>
+                            <div className="mt-2 flex items-center justify-between gap-4 border-t border-white/10 pt-2">
+                              <span className="font-semibold">Saldo</span>
+                              <span className={cn("font-bold", d.Saldo >= 0 ? "text-entrada" : "text-saida")}>
+                                {formatarMoeda(d.Saldo)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '16px', fontSize: 12 }} />
+                <Bar dataKey="Entradas" fill="oklch(0.72 0.17 152)" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                <Bar dataKey="Saídas" fill="oklch(0.65 0.2 25)" radius={[4, 4, 0, 0]} animationDuration={1000} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-sm text-muted-foreground">Sem movimentações nos últimos 30 dias</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
