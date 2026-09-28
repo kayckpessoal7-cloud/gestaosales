@@ -16,6 +16,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { ContentType } from "recharts/types/component/Tooltip";
 import { AlertCircle, Minus, Plus } from "lucide-react";
 
 import { MetaFaturamento } from "@/components/MetaFaturamento";
@@ -119,21 +120,37 @@ function Painel() {
 
     // Gráfico dos últimos 30 dias
     const inicio = somarDias(hoje, -29);
-    const dias: { dia: string; dataCompleta: string; Entradas: number; Saídas: number; Saldo: number; isHoje: boolean }[] = [];
+    const DIAS_SEMANA_NOMES = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+    const dias: { dia: string; dataCompleta: string; dataCompletaLonga: string; Entradas: number; Saídas: number; Saldo: number; isHoje: boolean }[] = [];
     let temMovimentacao = false;
+    let totalEntradas30 = 0;
+    let totalSaidas30 = 0;
+    let melhorDiaValor = 0;
+    let melhorDiaLabel = "";
     for (let i = 0; i < 30; i++) {
       const data = somarDias(inicio, i);
       const isHoje = data === hoje;
       const ent = somar(entradas.filter((m) => m.data === data));
       const sai = somar(saidas.filter((m) => m.data === data));
       if (ent > 0 || sai > 0) temMovimentacao = true;
+      totalEntradas30 += ent;
+      totalSaidas30 += sai;
+      const saldo = ent - sai;
+      if (saldo > melhorDiaValor) {
+        melhorDiaValor = saldo;
+        melhorDiaLabel = rotuloCurto(data);
+      }
+
+      const dObj = new Date(`${data}T12:00:00`);
+      const diaSemana = DIAS_SEMANA_NOMES[dObj.getDay()] ?? "";
 
       dias.push({
-        dia: isHoje ? "Hoje" : rotuloCurto(data),
+        dia: rotuloCurto(data),
         dataCompleta: formatarData(data),
+        dataCompletaLonga: `${diaSemana}, ${formatarData(data)}`,
         Entradas: ent,
         Saídas: sai,
-        Saldo: ent - sai,
+        Saldo: saldo,
         isHoje,
       });
     }
@@ -168,6 +185,10 @@ function Painel() {
       saldoMes: doMes - gastoMes,
       dias,
       temMovimentacao,
+      totalEntradas30,
+      totalSaidas30,
+      melhorDiaValor,
+      melhorDiaLabel,
       despesas,
       lembretes,
       ultimas: movimentacoes.slice(0, 10),
@@ -228,48 +249,105 @@ function Painel() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Entradas x Saídas (últimos 30 dias)</CardTitle>
+        <CardHeader className="flex flex-row items-start justify-between gap-2">
+          <div className="space-y-1">
+            <CardTitle className="text-base">Entradas x Saídas (últimos 30 dias)</CardTitle>
+            {resumo.temMovimentacao && (
+              <p className="text-xs text-muted-foreground">
+                Total do período: {formatarMoeda(resumo.totalEntradas30 - resumo.totalSaidas30)}
+                {resumo.melhorDiaLabel ? ` · Melhor dia: ${resumo.melhorDiaLabel} (${formatarMoeda(resumo.melhorDiaValor)})` : ""}
+              </p>
+            )}
+          </div>
+          {resumo.temMovimentacao && (
+            <div className="flex items-center gap-3 text-xs">
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
+                Entradas
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ef4444]" />
+                Saídas
+              </span>
+            </div>
+          )}
         </CardHeader>
-        <CardContent className="h-64 px-2">
+        <CardContent className="px-2" style={{ height: 320 }}>
           {resumo.temMovimentacao ? (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={resumo.dias} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.32 0.015 88)" strokeOpacity={0.4} />
+              <BarChart
+                data={resumo.dias}
+                margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
+                barCategoryGap="20%"
+                barGap={3}
+              >
+                <defs>
+                  <linearGradient id="gradEntrada" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" />
+                    <stop offset="100%" stopColor="#15803d" />
+                  </linearGradient>
+                  <linearGradient id="gradSaida" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" />
+                    <stop offset="100%" stopColor="#991b1b" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="6 4"
+                  vertical={false}
+                  stroke="oklch(0.5 0 0)"
+                  strokeOpacity={0.08}
+                />
                 <XAxis
                   dataKey="dia"
-                  tick={{ fontSize: 11 }}
-                  interval={isMobile ? 6 : 3}
-                  tickLine={false}
-                  axisLine={{ strokeOpacity: 0.2 }}
-                />
-                <YAxis
-                  tick={{ fontSize: 11 }}
-                  tickFormatter={(v: number) => formatarMoeda(v).split(",")[0] ?? ""}
+                  tick={{ fontSize: 11, fill: "oklch(0.6 0.01 90)" }}
+                  interval={isMobile ? 4 : 2}
                   tickLine={false}
                   axisLine={false}
                 />
+                <YAxis
+                  tick={{ fontSize: 11, fill: "oklch(0.6 0.01 90)" }}
+                  tickFormatter={(v: number) => {
+                    const parts = formatarMoeda(v).split(",");
+                    return parts[0] ?? "";
+                  }}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, (max: number) => Math.ceil(max * 1.15)]}
+                />
                 <Tooltip
-                  cursor={{ fill: "oklch(0.32 0.015 88)", opacity: 0.1 }}
+                  cursor={{ fill: "oklch(0.85 0.02 85)", opacity: 0.08 }}
                   content={({ active, payload }) => {
                     if (active && payload && payload.length > 0) {
-                      const d = payload[0]?.payload;
+                      const d = payload[0]?.payload as (typeof resumo.dias)[number] | undefined;
                       if (!d) return null;
                       return (
-                        <div className="rounded-lg border border-border/50 bg-[#1a1814] p-3 text-sm shadow-xl text-white">
-                          <p className="mb-2 font-semibold">{d.dataCompleta} {d.isHoje && "(Hoje)"}</p>
+                        <div
+                          className="rounded-xl border bg-[#1c1a14] p-3 text-sm shadow-2xl"
+                          style={{ borderColor: "#d4a63c" }}
+                        >
+                          <p className="mb-2 font-semibold text-white">
+                            {d.dataCompletaLonga}
+                            {d.isHoje ? " (Hoje)" : ""}
+                          </p>
                           <div className="space-y-1">
-                            <div className="flex items-center justify-between gap-4">
-                              <span className="text-entrada">Entradas</span>
-                              <span className="font-medium text-entrada">{formatarMoeda(d.Entradas)}</span>
+                            <div className="flex items-center justify-between gap-6">
+                              <span style={{ color: "#22c55e" }}>Entradas</span>
+                              <span className="font-medium" style={{ color: "#22c55e" }}>
+                                {formatarMoeda(d.Entradas)}
+                              </span>
                             </div>
-                            <div className="flex items-center justify-between gap-4">
-                              <span className="text-saida">Saídas</span>
-                              <span className="font-medium text-saida">{formatarMoeda(d.Saídas)}</span>
+                            <div className="flex items-center justify-between gap-6">
+                              <span style={{ color: "#ef4444" }}>Saídas</span>
+                              <span className="font-medium" style={{ color: "#ef4444" }}>
+                                {formatarMoeda(d.Saídas)}
+                              </span>
                             </div>
-                            <div className="mt-2 flex items-center justify-between gap-4 border-t border-white/10 pt-2">
-                              <span className="font-semibold">Saldo</span>
-                              <span className={cn("font-bold", d.Saldo >= 0 ? "text-entrada" : "text-saida")}>
+                            <div className="mt-2 flex items-center justify-between gap-6 border-t pt-2" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                              <span className="font-semibold text-white">Saldo</span>
+                              <span
+                                className="font-bold"
+                                style={{ color: d.Saldo >= 0 ? "#22c55e" : "#ef4444" }}
+                              >
                                 {formatarMoeda(d.Saldo)}
                               </span>
                             </div>
@@ -280,9 +358,36 @@ function Painel() {
                     return null;
                   }}
                 />
-                <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '16px', fontSize: 12 }} />
-                <Bar dataKey="Entradas" fill="oklch(0.72 0.17 152)" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                <Bar dataKey="Saídas" fill="oklch(0.65 0.2 25)" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                <Bar
+                  dataKey="Entradas"
+                  fill="url(#gradEntrada)"
+                  radius={[6, 6, 0, 0]}
+                  animationDuration={800}
+                >
+                  {resumo.dias.map((entry, idx) => (
+                    <Cell
+                      key={`ent-${idx}`}
+                      fill="url(#gradEntrada)"
+                      stroke={entry.isHoje ? "#d4a63c" : undefined}
+                      strokeWidth={entry.isHoje ? 1.5 : 0}
+                    />
+                  ))}
+                </Bar>
+                <Bar
+                  dataKey="Saídas"
+                  fill="url(#gradSaida)"
+                  radius={[6, 6, 0, 0]}
+                  animationDuration={800}
+                >
+                  {resumo.dias.map((entry, idx) => (
+                    <Cell
+                      key={`sai-${idx}`}
+                      fill="url(#gradSaida)"
+                      stroke={entry.isHoje ? "#d4a63c" : undefined}
+                      strokeWidth={entry.isHoje ? 1.5 : 0}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           ) : (
