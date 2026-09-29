@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:28:57.783778+00:00",
+  "generated_at": "2026-09-29T00:45:07.068009+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -115,7 +115,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "bytes": 4421
+      "bytes": 4470
     },
     {
       "path": "src/routes/README.md",
@@ -355,7 +355,7 @@
     },
     {
       "path": "src/routes/_authenticated/relatorios.tsx",
-      "bytes": 7495
+      "bytes": 8048
     },
     {
       "path": "src/routes/_authenticated/configuracoes.tsx",
@@ -710,10 +710,6 @@
     {
       "source": "src/routes/__root.tsx",
       "target": "@/components/ui/sonner"
-    },
-    {
-      "source": "src/routes/__root.tsx",
-      "target": "../styles.css?url"
     },
     {
       "source": "src/routes/__root.tsx",
