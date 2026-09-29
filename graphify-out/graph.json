@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:12:35.283154+00:00",
+  "generated_at": "2026-09-29T01:26:08.573874+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -367,7 +367,7 @@
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 20065
+      "bytes": 23881
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
@@ -1714,6 +1714,10 @@
     {
       "source": "src/routes/_authenticated/painel.tsx",
       "target": "@/components/ui/card"
+    },
+    {
+      "source": "src/routes/_authenticated/painel.tsx",
+      "target": "@/components/ui/scroll-area"
     },
     {
       "source": "src/routes/_authenticated/painel.tsx",
