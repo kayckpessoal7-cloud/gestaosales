@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { noPeriodo, somar, useMovimentacoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO, inicioDoMes } from "@/lib/formato";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
 export const Route = createFileRoute("/_authenticated/entradas")({
   head: () => ({
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/_authenticated/entradas")({
 function Entradas() {
   const { data: movimentacoes = [] } = useMovimentacoes();
   const [aberto, setAberto] = useState(false);
+  const { oculto } = useOcultarValores();
   const hoje = hojeISO();
 
   const entradas = useMemo(
@@ -58,13 +60,17 @@ function Entradas() {
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Recebido hoje</p>
-            <p className="text-xl font-bold text-entrada">{formatarMoeda(totalHoje)}</p>
+            <p className="text-xl font-bold text-entrada transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalHoje)}
+            </p>
           </CardContent>
         </Card>
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Recebido no mês</p>
-            <p className="text-xl font-bold text-entrada">{formatarMoeda(totalMes)}</p>
+            <p className="text-xl font-bold text-entrada transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalMes)}
+            </p>
           </CardContent>
         </Card>
       </div>

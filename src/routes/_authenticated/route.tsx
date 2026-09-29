@@ -12,6 +12,8 @@ import {
 } from "@tanstack/react-router";
 import {
   BarChart3,
+  Eye,
+  EyeOff,
   LayoutDashboard,
   ListOrdered,
   Settings,
@@ -20,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +47,7 @@ const MENU = [
 
 function Layout() {
   const caminho = useRouterState({ select: (s) => s.location.pathname });
+  const { oculto, alternar } = useOcultarValores();
 
   return (
     <div className="min-h-screen w-full bg-background">
@@ -70,11 +74,29 @@ function Layout() {
             </Link>
           ))}
         </nav>
+        <div className="mt-auto">
+          <button
+            type="button"
+            onClick={alternar}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            {oculto ? <EyeOff className="h-5 w-5 shrink-0" /> : <Eye className="h-5 w-5 shrink-0" />}
+            {oculto ? "Mostrar valores" : "Esconder valores"}
+          </button>
+        </div>
       </aside>
 
       {/* Cabeçalho (celular) */}
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
         <Logo className="h-9 w-auto" />
+        <button
+          type="button"
+          onClick={alternar}
+          title={oculto ? "Mostrar valores" : "Esconder valores"}
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d4a63c]/40 bg-[#1c1a14] text-[#d4a63c] transition-colors duration-200 hover:bg-[#d4a63c]/10 hover:border-[#d4a63c]"
+        >
+          {oculto ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        </button>
       </header>
 
       <main className="px-4 pb-28 pt-4 lg:ml-60 lg:px-8 lg:pb-12 lg:pt-8">

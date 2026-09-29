@@ -25,6 +25,7 @@ import {
   useMovimentacoes,
 } from "@/lib/dados";
 import { formatarData, formatarMoeda, hojeISO, somarDias } from "@/lib/formato";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
@@ -51,6 +52,7 @@ function Historico() {
   const { data: categorias = [] } = useCategorias();
   const { data: barbeiros = [] } = useBarbeiros();
 
+  const { oculto } = useOcultarValores();
   const hoje = hojeISO();
   const [tipo, setTipo] = useState(TODOS);
   const [categoria, setCategoria] = useState(TODOS);
@@ -235,10 +237,10 @@ function Historico() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="h-11" onClick={exportarCSV}>
+            <Button variant="outline" className="h-11" onClick={exportarCSV} disabled={oculto} title={oculto ? "Mostre os valores para exportar" : undefined}>
               <Download className="mr-1 h-4 w-4" /> Exportar CSV
             </Button>
-            <Button variant="outline" className="h-11" onClick={exportarPDF}>
+            <Button variant="outline" className="h-11" onClick={exportarPDF} disabled={oculto} title={oculto ? "Mostre os valores para exportar" : undefined}>
               <FileText className="mr-1 h-4 w-4" /> Exportar PDF
             </Button>
           </div>
@@ -249,30 +251,34 @@ function Historico() {
         <Card className="py-3">
           <CardContent className="px-3">
             <p className="text-[11px] uppercase text-muted-foreground">Entradas</p>
-            <p className="text-base font-bold text-entrada sm:text-lg">
-              {formatarMoeda(totalEntradas)}
+            <p className="text-base font-bold text-entrada sm:text-lg transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalEntradas)}
             </p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3">
             <p className="text-[11px] uppercase text-muted-foreground">Saídas</p>
-            <p className="text-base font-bold text-saida sm:text-lg">{formatarMoeda(totalSaidas)}</p>
+            <p className="text-base font-bold text-saida sm:text-lg transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalSaidas)}
+            </p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3">
             <p className="text-[11px] uppercase text-muted-foreground">Saldo</p>
             <p
-              className={`text-base font-bold sm:text-lg ${totalEntradas - totalSaidas >= 0 ? "text-entrada" : "text-saida"}`}
+              className={`text-base font-bold sm:text-lg transition-opacity duration-200 ${oculto ? "text-foreground" : totalEntradas - totalSaidas >= 0 ? "text-entrada" : "text-saida"}`}
             >
-              {formatarMoeda(totalEntradas - totalSaidas)}
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalEntradas - totalSaidas)}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <p className="text-sm text-muted-foreground">{filtradas.length} movimentação(ões)</p>
+      <p className="text-sm text-muted-foreground transition-opacity duration-200">
+        {oculto ? "••" : filtradas.length} movimentação(ões)
+      </p>
       <ListaMovimentacoes itens={filtradas} />
     </div>
   );

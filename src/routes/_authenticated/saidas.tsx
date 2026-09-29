@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { noPeriodo, somar, useMovimentacoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO, inicioDoMes } from "@/lib/formato";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
 export const Route = createFileRoute("/_authenticated/saidas")({
   head: () => ({
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/_authenticated/saidas")({
 function Saidas() {
   const { data: movimentacoes = [] } = useMovimentacoes();
   const [aberto, setAberto] = useState(false);
+  const { oculto } = useOcultarValores();
   const hoje = hojeISO();
 
   const saidas = useMemo(() => movimentacoes.filter((m) => m.tipo === "saida"), [movimentacoes]);
@@ -65,13 +67,17 @@ function Saidas() {
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Gasto no mês</p>
-            <p className="text-xl font-bold text-saida">{formatarMoeda(totalMes)}</p>
+            <p className="text-xl font-bold text-saida transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(totalMes)}
+            </p>
           </CardContent>
         </Card>
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Despesas fixas</p>
-            <p className="text-xl font-bold text-saida">{formatarMoeda(fixasMes)}</p>
+            <p className="text-xl font-bold text-saida transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(fixasMes)}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -87,10 +93,12 @@ function Saidas() {
           {ranking.map((c) => (
             <div key={c.nome} className="space-y-1">
               <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="min-w-0 truncate">{c.nome}</span>
-                <span className="shrink-0 font-semibold text-saida">{formatarMoeda(c.valor)}</span>
+                <span className="min-w-0 truncate transition-opacity duration-200">{oculto ? "••••••" : c.nome}</span>
+                <span className="shrink-0 font-semibold text-saida transition-opacity duration-200">
+                  {oculto ? "R$\u00A0••••••" : formatarMoeda(c.valor)}
+                </span>
               </div>
-              <Progress value={totalMes > 0 ? (c.valor / totalMes) * 100 : 0} className="h-2" />
+              <Progress value={oculto ? 0 : (totalMes > 0 ? (c.valor / totalMes) * 100 : 0)} className="h-2 transition-all duration-200" />
             </div>
           ))}
         </CardContent>

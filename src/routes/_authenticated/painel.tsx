@@ -219,20 +219,11 @@ function Painel() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-5">
-      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+      <header className="flex items-center gap-4">
         <div className="min-w-0">
           <h1 className="truncate text-xl font-bold sm:text-2xl">Painel</h1>
           <p className="truncate text-sm text-muted-foreground">Hoje é {formatarData(hoje)}</p>
         </div>
-        <button
-          type="button"
-          onClick={alternar}
-          title={oculto ? "Mostrar valores" : "Esconder valores"}
-          aria-label={oculto ? "Mostrar valores" : "Esconder valores"}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#d4a63c]/40 bg-[#1c1a14] text-[#d4a63c] transition-colors duration-200 hover:bg-[#d4a63c]/10 hover:border-[#d4a63c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d4a63c]/50"
-        >
-          {oculto ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
       </header>
 
       {/* Botões de acesso rápido */}
