@@ -32,6 +32,7 @@ import {
 } from "@/lib/dados";
 import { formatarMoeda, valorParaNumero } from "@/lib/formato";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
+import { ValorOcultavel } from "@/components/ValorOcultavel";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({
@@ -166,8 +167,8 @@ function Configuracoes() {
             Salvar meta
           </Button>
           {config?.meta_mensal ? (
-            <p className="w-full text-xs text-muted-foreground transition-opacity duration-200">
-              Meta atual: {oculto ? "R$\u00A0••••••" : formatarMoeda(config.meta_mensal)}
+            <p className="w-full text-xs text-muted-foreground">
+              Meta atual: <ValorOcultavel oculto={oculto}>{formatarMoeda(config.meta_mensal)}</ValorOcultavel>
             </p>
           ) : null}
         </CardContent>
@@ -237,8 +238,8 @@ function Configuracoes() {
                     >
                       {c.nome}
                       {c.preco != null && (
-                        <strong className="text-entrada transition-opacity duration-200">
-                          {oculto ? "R$\u00A0••••••" : formatarMoeda(c.preco)}
+                        <strong className="text-entrada">
+                          <ValorOcultavel oculto={oculto}>{formatarMoeda(c.preco)}</ValorOcultavel>
                         </strong>
                       )}
                       <button
@@ -300,8 +301,8 @@ function Configuracoes() {
                 key={b.id}
                 className="flex items-center justify-between gap-3 rounded-lg bg-secondary/50 px-3 py-2"
               >
-                <span className="min-w-0 truncate text-sm transition-opacity duration-200">
-                  {b.nome} — {oculto ? "••" : b.comissao}%
+                <span className="min-w-0 truncate text-sm">
+                  {b.nome} — <ValorOcultavel oculto={oculto} mascara="••">{b.comissao}</ValorOcultavel>%
                 </span>
                 <Button
                   size="icon"

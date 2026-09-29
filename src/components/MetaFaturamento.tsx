@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Target } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+import { ValorOcultavel } from "@/components/ValorOcultavel";
 import { useConfiguracoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO } from "@/lib/formato";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
@@ -33,8 +34,8 @@ export function MetaFaturamento({ faturamento, oculto = false, ocultarValores = 
           <p className="truncate text-sm font-semibold">Meta de faturamento — {mes}</p>
         </div>
         {meta > 0 && (
-          <p className={`shrink-0 text-sm font-bold transition-opacity duration-200${escondido ? " select-none" : ""}`}>
-            {escondido ? "R$\u00A0•••••• / R$\u00A0••••••" : `${formatarMoeda(faturamento)} / ${formatarMoeda(meta)}`}
+          <p className="shrink-0 text-sm font-bold">
+            <ValorOcultavel oculto={escondido}>{formatarMoeda(faturamento)}</ValorOcultavel> / <ValorOcultavel oculto={escondido}>{formatarMoeda(meta)}</ValorOcultavel>
           </p>
         )}
       </div>
@@ -55,12 +56,10 @@ export function MetaFaturamento({ faturamento, oculto = false, ocultarValores = 
               />
             )}
           </div>
-          <p className={`text-xs text-muted-foreground transition-opacity duration-200${escondido ? " select-none" : ""}`}>
-            {escondido
-              ? "••% da meta atingida"
-              : percentual >= 100
-                ? `Meta batida! ${percentualTexto}% do objetivo 🎉`
-                : `${percentualTexto}% da meta atingida`}
+          <p className="text-xs text-muted-foreground">
+            {percentual >= 100 && !escondido ? "Meta batida! " : ""}
+            <ValorOcultavel oculto={escondido} mascara="••">{percentualTexto}</ValorOcultavel>
+            {percentual >= 100 && !escondido ? "% do objetivo 🎉" : "% da meta atingida"}
           </p>
         </div>
       ) : (

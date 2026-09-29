@@ -6,6 +6,12 @@ import { Download, FileText, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { ListaMovimentacoes } from "@/components/ListaMovimentacoes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,6 +32,7 @@ import {
 } from "@/lib/dados";
 import { formatarData, formatarMoeda, hojeISO, somarDias } from "@/lib/formato";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
+import { ValorOcultavel } from "@/components/ValorOcultavel";
 
 export const Route = createFileRoute("/_authenticated/historico")({
   head: () => ({
@@ -236,14 +243,39 @@ function Historico() {
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="h-11" onClick={exportarCSV} disabled={oculto} title={oculto ? "Mostre os valores para exportar" : undefined}>
-              <Download className="mr-1 h-4 w-4" /> Exportar CSV
-            </Button>
-            <Button variant="outline" className="h-11" onClick={exportarPDF} disabled={oculto} title={oculto ? "Mostre os valores para exportar" : undefined}>
-              <FileText className="mr-1 h-4 w-4" /> Exportar PDF
-            </Button>
-          </div>
+          <TooltipProvider delayDuration={200}>
+            <div className="flex flex-wrap gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button variant="outline" className="h-11" onClick={exportarCSV} disabled={oculto}>
+                      <Download className="mr-1 h-4 w-4" /> Exportar CSV
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {oculto && (
+                  <TooltipContent>
+                    <p>Mostre os valores para exportar</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button variant="outline" className="h-11" onClick={exportarPDF} disabled={oculto}>
+                      <FileText className="mr-1 h-4 w-4" /> Exportar PDF
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {oculto && (
+                  <TooltipContent>
+                    <p>Mostre os valores para exportar</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </div>
+          </TooltipProvider>
         </CardContent>
       </Card>
 
@@ -276,8 +308,8 @@ function Historico() {
         </Card>
       </div>
 
-      <p className="text-sm text-muted-foreground transition-opacity duration-200">
-        {oculto ? "••" : filtradas.length} movimentação(ões)
+      <p className="text-sm text-muted-foreground">
+        <ValorOcultavel oculto={oculto} mascara="••">{filtradas.length}</ValorOcultavel> movimentação(ões)
       </p>
       <ListaMovimentacoes itens={filtradas} />
     </div>
