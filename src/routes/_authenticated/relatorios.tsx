@@ -24,6 +24,7 @@ import {
   somarDias,
 } from "@/lib/formato";
 import { cn } from "@/lib/utils";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
 export const Route = createFileRoute("/_authenticated/relatorios")({
   head: () => ({
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/_authenticated/relatorios")({
 function Relatorios() {
   const { data: movimentacoes = [] } = useMovimentacoes();
   const { data: barbeiros = [] } = useBarbeiros();
+  const { oculto } = useOcultarValores();
 
   const hoje = hojeISO();
   const [de, setDe] = useState(inicioDoMes(hoje));
@@ -146,26 +148,36 @@ function Relatorios() {
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Total recebido</p>
-            <p className="text-xl font-bold text-entrada">{formatarMoeda(dados.recebido)}</p>
+            <p className="text-xl font-bold text-entrada transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(dados.recebido)}
+            </p>
             <p
               className={cn(
-                "mt-1 flex items-center gap-1 text-xs",
-                dados.variacao >= 0 ? "text-entrada" : "text-saida",
+                "mt-1 flex items-center gap-1 text-xs transition-opacity duration-200",
+                oculto ? "text-muted-foreground" : dados.variacao >= 0 ? "text-entrada" : "text-saida",
               )}
             >
-              {dados.variacao >= 0 ? (
-                <TrendingUp className="h-3 w-3" />
+              {oculto ? (
+                <span>••••••</span>
               ) : (
-                <TrendingDown className="h-3 w-3" />
+                <>
+                  {dados.variacao >= 0 ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  {dados.variacao > 0 ? "+" : ""}{dados.variacao.toFixed(1).replace(".", ",")}% vs. período anterior
+                </>
               )}
-              {dados.variacao > 0 ? "+" : ""}{dados.variacao.toFixed(1).replace(".", ",")}% vs. período anterior
             </p>
           </CardContent>
         </Card>
         <Card className="py-4">
           <CardContent className="px-4">
             <p className="text-xs uppercase text-muted-foreground">Total gasto</p>
-            <p className="text-xl font-bold text-saida">{formatarMoeda(dados.gasto)}</p>
+            <p className="text-xl font-bold text-saida transition-opacity duration-200">
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(dados.gasto)}
+            </p>
           </CardContent>
         </Card>
         <Card className="py-4">
@@ -173,11 +185,11 @@ function Relatorios() {
             <p className="text-xs uppercase text-muted-foreground">Saldo</p>
             <p
               className={cn(
-                "text-xl font-bold",
-                dados.saldo >= 0 ? "text-entrada" : "text-saida",
+                "text-xl font-bold transition-opacity duration-200",
+                oculto ? "text-foreground" : dados.saldo >= 0 ? "text-entrada" : "text-saida",
               )}
             >
-              {formatarMoeda(dados.saldo)}
+              {oculto ? "R$\u00A0••••••" : formatarMoeda(dados.saldo)}
             </p>
           </CardContent>
         </Card>
@@ -195,11 +207,15 @@ function Relatorios() {
               key={f.forma}
               className="flex items-center justify-between gap-3 rounded-lg bg-secondary/50 px-3 py-2 text-sm"
             >
-              <span className="min-w-0 truncate">{f.forma}</span>
-              <span className="shrink-0">
-                <span className="font-semibold text-entrada">{formatarMoeda(f.entradas)}</span>
+              <span className="min-w-0 truncate transition-opacity duration-200">{oculto ? "••••••" : f.forma}</span>
+              <span className="shrink-0 transition-opacity duration-200">
+                <span className={cn("font-semibold", oculto ? "text-muted-foreground" : "text-entrada")}>
+                  {oculto ? "R$\u00A0••••••" : formatarMoeda(f.entradas)}
+                </span>
                 <span className="mx-2 text-muted-foreground">/</span>
-                <span className="font-semibold text-saida">{formatarMoeda(f.saidas)}</span>
+                <span className={cn("font-semibold", oculto ? "text-muted-foreground" : "text-saida")}>
+                  {oculto ? "R$\u00A0••••••" : formatarMoeda(f.saidas)}
+                </span>
               </span>
             </div>
           ))}
@@ -220,13 +236,13 @@ function Relatorios() {
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg bg-secondary/50 px-3 py-2 text-sm"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium">{c.nome}</p>
-                <p className="text-xs text-muted-foreground">
-                  Produziu {formatarMoeda(c.total)} · {c.percentual}%
+                <p className="truncate font-medium transition-opacity duration-200">{oculto ? "••••••" : c.nome}</p>
+                <p className="text-xs text-muted-foreground transition-opacity duration-200">
+                  {oculto ? "Produziu R$\u00A0•••••• · ••%" : `Produziu ${formatarMoeda(c.total)} · ${c.percentual}%`}
                 </p>
               </div>
-              <span className="shrink-0 font-semibold text-primary">
-                {formatarMoeda(c.comissao)}
+              <span className={cn("shrink-0 font-semibold transition-opacity duration-200", oculto ? "text-muted-foreground" : "text-primary")}>
+                {oculto ? "R$\u00A0••••••" : formatarMoeda(c.comissao)}
               </span>
             </div>
           ))}
