@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:00:04.775530+00:00",
+  "generated_at": "2026-09-29T00:21:53.968121+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -71,7 +71,7 @@
     },
     {
       "path": "src/components/MetaFaturamento.tsx",
-      "bytes": 2673
+      "bytes": 3016
     },
     {
       "path": "src/components/ValorOcultavel.tsx",
