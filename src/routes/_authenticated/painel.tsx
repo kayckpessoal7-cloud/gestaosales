@@ -260,10 +260,12 @@ function Painel() {
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div className="min-w-0 text-sm">
               <p className="font-semibold text-primary">Despesas fixas deste mês</p>
-              <p className="text-muted-foreground">
-                {resumo.lembretes
-                  .map((m) => `${m.categoria} (vence dia ${m.dia_vencimento})`)
-                  .join(" · ")}
+              <p className={cn("text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
+                {oculto
+                  ? "••••••"
+                  : resumo.lembretes
+                      .map((m) => `${m.categoria} (vence dia ${m.dia_vencimento})`)
+                      .join(" · ")}
               </p>
             </div>
           </CardContent>
@@ -491,16 +493,17 @@ function Painel() {
                 className="flex items-center justify-between gap-3 rounded-lg bg-secondary/50 px-3 py-2"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{m.categoria}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {formatarDataRelativa(m.data)} · {m.forma_pagamento}
+                  <p className={cn("truncate text-sm font-medium transition-opacity duration-200", oculto && "select-none")}>
+                    {oculto ? "••••••" : m.categoria}
+                  </p>
+                  <p className={cn("truncate text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
+                    {oculto ? "•••• · ••••" : `${formatarDataRelativa(m.data)} · ${m.forma_pagamento}`}
                   </p>
                 </div>
                 <span
                   className={cn(
                     "shrink-0 text-sm font-semibold transition-opacity duration-200",
-                    m.tipo === "entrada" ? "text-entrada" : "text-saida",
-                    oculto && "select-none",
+                    oculto ? "text-muted-foreground select-none" : m.tipo === "entrada" ? "text-entrada" : "text-saida",
                   )}
                 >
                   {oculto
