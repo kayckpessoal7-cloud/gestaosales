@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:32:09.153773+00:00",
+  "generated_at": "2026-09-29T01:35:26.406845+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -367,7 +367,7 @@
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 23881
+      "bytes": 22003
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
