@@ -276,28 +276,10 @@ function Painel() {
       </div>
 
       <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-2">
-          <div className="space-y-1">
-            <CardTitle className="text-base">Entradas x Saídas (últimos 30 dias)</CardTitle>
-            {resumo.temMovimentacao && !oculto && (
-              <p className="text-xs text-muted-foreground">
-                Total do período: {formatarMoeda(resumo.totalEntradas30 - resumo.totalSaidas30)}
-                {resumo.melhorDiaLabel ? ` · Melhor dia: ${resumo.melhorDiaLabel} (${formatarMoeda(resumo.melhorDiaValor)})` : ""}
-              </p>
-            )}
-          </div>
-          {resumo.temMovimentacao && !oculto && (
-            <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
-                Entradas
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ef4444]" />
-                Saídas
-              </span>
-            </div>
-          )}
+        <CardHeader>
+          <CardTitle className="text-base font-medium tracking-wide uppercase text-muted-foreground">
+            Entradas x Saídas — últimos 30 dias
+          </CardTitle>
         </CardHeader>
         <CardContent className="px-2" style={{ height: 320 }}>
           {oculto ? (
@@ -309,42 +291,32 @@ function Painel() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={resumo.dias}
-                margin={{ top: 12, right: 10, left: -10, bottom: 0 }}
-                barCategoryGap="20%"
-                barGap={3}
+                margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+                barCategoryGap="25%"
+                barGap={2}
               >
-                <defs>
-                  <linearGradient id="gradEntrada" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" />
-                    <stop offset="100%" stopColor="#15803d" />
-                  </linearGradient>
-                  <linearGradient id="gradSaida" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" />
-                    <stop offset="100%" stopColor="#991b1b" />
-                  </linearGradient>
-                </defs>
                 <CartesianGrid
-                  strokeDasharray="6 4"
+                  strokeDasharray="4 4"
                   vertical={false}
                   stroke="oklch(0.5 0 0)"
-                  strokeOpacity={0.08}
+                  strokeOpacity={0.15}
                 />
                 <XAxis
                   dataKey="dia"
                   tick={{ fontSize: 11, fill: "oklch(0.6 0.01 90)" }}
-                  interval={isMobile ? 4 : 2}
+                  interval={4}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
                   tick={{ fontSize: 11, fill: "oklch(0.6 0.01 90)" }}
                   tickFormatter={(v: number) => {
-                    const parts = formatarMoeda(v).split(",");
-                    return parts[0] ?? "";
+                    if (v === 0) return "R$ 0";
+                    if (v >= 1000) return `R$ ${v / 1000}k`;
+                    return `R$ ${v}`;
                   }}
                   tickLine={false}
                   axisLine={false}
-                  domain={[0, (max: number) => Math.ceil(max * 1.15)]}
                 />
                 <Tooltip
                   cursor={{ fill: "oklch(0.85 0.02 85)", opacity: 0.08 }}
@@ -355,7 +327,7 @@ function Painel() {
                       return (
                         <div
                           className="rounded-xl border bg-[#1c1a14] p-3 text-sm shadow-2xl"
-                          style={{ borderColor: "#d4a63c" }}
+                          style={{ borderColor: "rgba(255,255,255,0.1)" }}
                         >
                           <p className="mb-2 font-semibold text-white">
                             {d.dataCompletaLonga}
@@ -363,8 +335,8 @@ function Painel() {
                           </p>
                           <div className="space-y-1">
                             <div className="flex items-center justify-between gap-6">
-                              <span style={{ color: "#22c55e" }}>Entradas</span>
-                              <span className="font-medium" style={{ color: "#22c55e" }}>
+                              <span style={{ color: "#10b981" }}>Entradas</span>
+                              <span className="font-medium" style={{ color: "#10b981" }}>
                                 {formatarMoeda(d.Entradas)}
                               </span>
                             </div>
@@ -378,7 +350,7 @@ function Painel() {
                               <span className="font-semibold text-white">Saldo</span>
                               <span
                                 className="font-bold"
-                                style={{ color: d.Saldo >= 0 ? "#22c55e" : "#ef4444" }}
+                                style={{ color: d.Saldo >= 0 ? "#10b981" : "#ef4444" }}
                               >
                                 {formatarMoeda(d.Saldo)}
                               </span>
@@ -390,36 +362,28 @@ function Painel() {
                     return null;
                   }}
                 />
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  iconType="square"
+                  wrapperStyle={{ paddingTop: "20px", fontSize: "12px" }}
+                />
                 <Bar
+                  name="Entradas"
                   dataKey="Entradas"
-                  fill="url(#gradEntrada)"
-                  radius={[6, 6, 0, 0]}
+                  fill="#10b981"
+                  radius={[4, 4, 0, 0]}
+                  barSize={10}
                   animationDuration={800}
-                >
-                  {resumo.dias.map((entry, idx) => (
-                    <Cell
-                      key={`ent-${idx}`}
-                      fill="url(#gradEntrada)"
-                      stroke={entry.isHoje ? "#d4a63c" : undefined}
-                      strokeWidth={entry.isHoje ? 1.5 : 0}
-                    />
-                  ))}
-                </Bar>
+                />
                 <Bar
+                  name="Saídas"
                   dataKey="Saídas"
-                  fill="url(#gradSaida)"
-                  radius={[6, 6, 0, 0]}
+                  fill="#ef4444"
+                  radius={[4, 4, 0, 0]}
+                  barSize={10}
                   animationDuration={800}
-                >
-                  {resumo.dias.map((entry, idx) => (
-                    <Cell
-                      key={`sai-${idx}`}
-                      fill="url(#gradSaida)"
-                      stroke={entry.isHoje ? "#d4a63c" : undefined}
-                      strokeWidth={entry.isHoje ? 1.5 : 0}
-                    />
-                  ))}
-                </Bar>
+                />
               </BarChart>
             </ResponsiveContainer>
           ) : (
