@@ -22,6 +22,7 @@ import { AlertCircle, Eye, EyeOff, Minus, Plus } from "lucide-react";
 import { MetaFaturamento } from "@/components/MetaFaturamento";
 import { MovimentacaoDialog } from "@/components/MovimentacaoDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -72,38 +73,6 @@ const CORES_PIZZA = [
 
 const VALOR_OCULTO = "R$\u00A0••••••";
 const VALOR_OCULTO_CURTO = "R$\u00A0••••";
-const LS_KEY = "painel:valores-ocultos";
-
-/** Hook reutilizável para esconder/mostrar valores financeiros. */
-function useOcultarValores() {
-  const [oculto, setOculto] = useState(() => {
-    try {
-      return localStorage.getItem(LS_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
-
-  const alternar = useCallback(() => {
-    setOculto((prev) => {
-      const novo = !prev;
-      try {
-        localStorage.setItem(LS_KEY, novo ? "1" : "0");
-      } catch {
-        /* noop */
-      }
-      return novo;
-    });
-  }, []);
-
-  /** Retorna o valor formatado ou mascarado. */
-  const formatar = useCallback(
-    (valor: number, curto = false) => (oculto ? (curto ? VALOR_OCULTO_CURTO : VALOR_OCULTO) : formatarMoeda(valor)),
-    [oculto],
-  );
-
-  return { oculto, alternar, formatar } as const;
-}
 
 function CardValor({
   titulo,
@@ -154,7 +123,12 @@ function Painel() {
   const { data: movimentacoes = [], isLoading } = useMovimentacoes();
   const [dialogo, setDialogo] = useState<TipoMovimentacao | null>(null);
   const isMobile = useIsMobile();
-  const { oculto, alternar, formatar } = useOcultarValores();
+  const { oculto, alternar } = useOcultarValores();
+
+  const formatar = useCallback(
+    (valor: number, curto = false) => (oculto ? (curto ? VALOR_OCULTO_CURTO : VALOR_OCULTO) : formatarMoeda(valor)),
+    [oculto],
+  );
 
   const hoje = hojeISO();
   const resumo = useMemo(() => {

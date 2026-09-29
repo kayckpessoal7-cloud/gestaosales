@@ -8,13 +8,15 @@ import { Target } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useConfiguracoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO } from "@/lib/formato";
+import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
 export function MetaFaturamento({ faturamento, oculto = false, ocultarValores = false }: { faturamento: number; oculto?: boolean; ocultarValores?: boolean }) {
   const { data: config } = useConfiguracoes();
+  const { oculto: ocultoGlobal } = useOcultarValores();
   const meta = config?.meta_mensal ?? 0;
 
   // Compat: aceita tanto `oculto` quanto `ocultarValores`
-  const escondido = oculto || ocultarValores;
+  const escondido = oculto || ocultarValores || ocultoGlobal;
 
   // Nome do mês atual em português (ex.: "setembro")
   const mes = new Date(`${hojeISO()}T12:00:00`).toLocaleDateString("pt-BR", { month: "long" });
