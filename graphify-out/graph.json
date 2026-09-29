@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:30:35.244784+00:00",
+  "generated_at": "2026-09-29T01:32:09.153773+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -71,7 +71,7 @@
     },
     {
       "path": "src/components/MetaFaturamento.tsx",
-      "bytes": 3153
+      "bytes": 3137
     },
     {
       "path": "src/components/ValorOcultavel.tsx",
@@ -347,7 +347,7 @@
     },
     {
       "path": "src/routes/_authenticated/historico.tsx",
-      "bytes": 11366
+      "bytes": 12257
     },
     {
       "path": "src/routes/_authenticated/saidas.tsx",
@@ -359,7 +359,7 @@
     },
     {
       "path": "src/routes/_authenticated/configuracoes.tsx",
-      "bytes": 11529
+      "bytes": 11559
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
@@ -546,6 +546,10 @@
     {
       "source": "src/components/MetaFaturamento.tsx",
       "target": "@/components/ui/card"
+    },
+    {
+      "source": "src/components/MetaFaturamento.tsx",
+      "target": "@/components/ValorOcultavel"
     },
     {
       "source": "src/components/MetaFaturamento.tsx",
@@ -1473,6 +1477,10 @@
     },
     {
       "source": "src/routes/_authenticated/historico.tsx",
+      "target": "@/components/ui/tooltip"
+    },
+    {
+      "source": "src/routes/_authenticated/historico.tsx",
       "target": "@/components/ui/button"
     },
     {
@@ -1502,6 +1510,10 @@
     {
       "source": "src/routes/_authenticated/historico.tsx",
       "target": "@/hooks/use-ocultar-valores"
+    },
+    {
+      "source": "src/routes/_authenticated/historico.tsx",
+      "target": "@/components/ValorOcultavel"
     },
     {
       "source": "src/routes/_authenticated/saidas.tsx",
@@ -1646,6 +1658,10 @@
     {
       "source": "src/routes/_authenticated/configuracoes.tsx",
       "target": "@/hooks/use-ocultar-valores"
+    },
+    {
+      "source": "src/routes/_authenticated/configuracoes.tsx",
+      "target": "@/components/ValorOcultavel"
     },
     {
       "source": "src/routes/_authenticated/route.tsx",
