@@ -19,11 +19,9 @@ import {
 } from "@/lib/dados";
 import {
   formatarMoeda,
-  formatarPercentual,
   hojeISO,
   inicioDoMes,
   somarDias,
-  variacaoPercentual,
 } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
@@ -56,44 +54,67 @@ function Relatorios() {
   const [ate, setAte] = useState(hoje);
 
   const dados = useMemo(() => {
-    const entradas = movimentacoes.filter((m) => m.tipo === "entrada");
-    const saidas = movimentacoes.filter((m) => m.tipo === "saida");
+    const movs = movimentacoes || [];
+    const entradas = movs.filter((m) => m?.tipo === "entrada");
+    const saidas = movs.filter((m) => m?.tipo === "saida");
 
-    const noIntervalo = noPeriodo(entradas, de, ate);
-    const saidasIntervalo = noPeriodo(saidas, de, ate);
+    const dataDeSegura = de || hoje;
+    const dataAteSegura = ate || hoje;
 
-    // Período anterior de mesmo tamanho, imediatamente antes do selecionado
-    const dias = Math.max(
-      1,
-      Math.round(
-        (new Date(ate + "T00:00:00").getTime() - new Date(de + "T00:00:00").getTime()) / 86400000,
-      ) + 1,
-    );
-    const anteriorAte = somarDias(de, -1);
-    const anteriorDe = somarDias(anteriorAte, -(dias - 1));
-    const entradasAnterior = somar(noPeriodo(entradas, anteriorDe, anteriorAte));
+    const noIntervalo = noPeriodo(entradas, dataDeSegura, dataAteSegura) || [];
+    const saidasIntervalo = noPeriodo(saidas, dataDeSegura, dataAteSegura) || [];
+
+    let dias = 1;
+    const msAte = new Date(dataAteSegura + "T00:00:00").getTime();
+    const msDe = new Date(dataDeSegura + "T00:00:00").getTime();
+    if (!Number.isNaN(msAte) && !Number.isNaN(msDe)) {
+      dias = Math.max(1, Math.round((msAte - msDe) / 86400000) + 1);
+    }
+
+    let anteriorAte = hoje;
+    let anteriorDe = hoje;
+    try {
+      anteriorAte = somarDias(dataDeSegura, -1);
+      anteriorDe = somarDias(anteriorAte, -(dias - 1));
+    } catch (erro) {
+      // Falha de data ignorada
+    }
+    
+    const entradasAnterior = somar(noPeriodo(entradas, anteriorDe, anteriorAte) || []);
 
     const recebido = somar(noIntervalo);
     const gasto = somar(saidasIntervalo);
 
-    const porForma = FORMAS_PAGAMENTO.map((forma) => ({
+    const porForma = (FORMAS_PAGAMENTO || []).map((forma) => ({
       forma,
-      entradas: somar(noIntervalo.filter((m) => m.forma_pagamento === forma)),
-      saidas: somar(saidasIntervalo.filter((m) => m.forma_pagamento === forma)),
+      entradas: somar(noIntervalo.filter((m) => m?.forma_pagamento === forma)),
+      saidas: somar(saidasIntervalo.filter((m) => m?.forma_pagamento === forma)),
     }));
 
-    const comissoes = barbeiros.map((b) => {
-      const total = somar(noIntervalo.filter((m) => m.barbeiro_id === b.id));
-      return { nome: b.nome, total, comissao: (total * b.comissao) / 100, percentual: b.comissao };
+    const comissoes = (barbeiros || []).map((b) => {
+      const total = somar(noIntervalo.filter((m) => m?.barbeiro_id === b?.id));
+      return { 
+        nome: b?.nome || "Desconhecido", 
+        total, 
+        comissao: (total * (b?.comissao || 0)) / 100, 
+        percentual: b?.comissao || 0 
+      };
     });
 
-    const faturamentoMes = somar(noPeriodo(entradas, inicioDoMes(hoje), hoje));
+    const faturamentoMes = somar(noPeriodo(entradas, inicioDoMes(hoje), hoje) || []);
+
+    let variacao = 0;
+    if (entradasAnterior > 0) {
+      variacao = ((recebido - entradasAnterior) / entradasAnterior) * 100;
+    } else if (recebido > 0) {
+      variacao = 100;
+    }
 
     return {
       recebido,
       gasto,
       saldo: recebido - gasto,
-      variacao: variacaoPercentual(recebido, entradasAnterior) ?? 0,
+      variacao,
       entradasAnterior,
       anteriorDe,
       anteriorAte,
@@ -137,7 +158,7 @@ function Relatorios() {
               ) : (
                 <TrendingDown className="h-3 w-3" />
               )}
-              {formatarPercentual(dados.variacao)} vs. período anterior
+              {dados.variacao > 0 ? "+" : ""}{dados.variacao.toFixed(1).replace(".", ",")}% vs. período anterior
             </p>
           </CardContent>
         </Card>
