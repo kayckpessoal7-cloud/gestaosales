@@ -9,9 +9,12 @@ import { Card } from "@/components/ui/card";
 import { useConfiguracoes } from "@/lib/dados";
 import { formatarMoeda, hojeISO } from "@/lib/formato";
 
-export function MetaFaturamento({ faturamento, ocultarValores = false }: { faturamento: number; ocultarValores?: boolean }) {
+export function MetaFaturamento({ faturamento, oculto = false, ocultarValores = false }: { faturamento: number; oculto?: boolean; ocultarValores?: boolean }) {
   const { data: config } = useConfiguracoes();
   const meta = config?.meta_mensal ?? 0;
+
+  // Compat: aceita tanto `oculto` quanto `ocultarValores`
+  const escondido = oculto || ocultarValores;
 
   // Nome do mês atual em português (ex.: "setembro")
   const mes = new Date(`${hojeISO()}T12:00:00`).toLocaleDateString("pt-BR", { month: "long" });
@@ -27,9 +30,9 @@ export function MetaFaturamento({ faturamento, ocultarValores = false }: { fatur
           <Target className="h-5 w-5 shrink-0 text-amber-500" />
           <p className="truncate text-sm font-semibold">Meta de faturamento — {mes}</p>
         </div>
-        {meta > 0 && !ocultarValores && (
-          <p className="shrink-0 text-sm font-bold">
-            {formatarMoeda(faturamento)} / {formatarMoeda(meta)}
+        {meta > 0 && (
+          <p className={`shrink-0 text-sm font-bold transition-opacity duration-200${escondido ? " select-none" : ""}`}>
+            {escondido ? "R$\u00A0•••••• / R$\u00A0••••••" : `${formatarMoeda(faturamento)} / ${formatarMoeda(meta)}`}
           </p>
         )}
       </div>
@@ -41,22 +44,22 @@ export function MetaFaturamento({ faturamento, ocultarValores = false }: { fatur
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-valuenow={ocultarValores ? 0 : Math.round(barra)}
+            aria-valuenow={escondido ? 0 : Math.round(barra)}
           >
-            {!ocultarValores && (
+            {!escondido && (
               <div
                 className="h-full rounded-full bg-amber-500 transition-all"
                 style={{ width: `${barra}%` }}
               />
             )}
           </div>
-          {!ocultarValores && (
-            <p className="text-xs text-muted-foreground">
-              {percentual >= 100
+          <p className={`text-xs text-muted-foreground transition-opacity duration-200${escondido ? " select-none" : ""}`}>
+            {escondido
+              ? "••% da meta atingida"
+              : percentual >= 100
                 ? `Meta batida! ${percentualTexto}% do objetivo 🎉`
                 : `${percentualTexto}% da meta atingida`}
-            </p>
-          )}
+          </p>
         </div>
       ) : (
         <p className="px-4 text-sm text-muted-foreground">
