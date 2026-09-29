@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:21:53.968121+00:00",
+  "generated_at": "2026-09-29T00:23:21.499384+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -71,7 +71,7 @@
     },
     {
       "path": "src/components/MetaFaturamento.tsx",
-      "bytes": 3016
+      "bytes": 3153
     },
     {
       "path": "src/components/ValorOcultavel.tsx",
@@ -367,7 +367,7 @@
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 20895
+      "bytes": 20312
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
@@ -554,6 +554,10 @@
     {
       "source": "src/components/MetaFaturamento.tsx",
       "target": "@/lib/formato"
+    },
+    {
+      "source": "src/components/MetaFaturamento.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     },
     {
       "source": "src/components/ValorOcultavel.tsx",
@@ -1678,6 +1682,10 @@
     {
       "source": "src/routes/_authenticated/painel.tsx",
       "target": "@/hooks/use-mobile"
+    },
+    {
+      "source": "src/routes/_authenticated/painel.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     },
     {
       "source": "src/routes/_authenticated/painel.tsx",
