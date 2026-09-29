@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:11:19.998063+00:00",
+  "generated_at": "2026-09-29T01:12:35.283154+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -355,11 +355,11 @@
     },
     {
       "path": "src/routes/_authenticated/relatorios.tsx",
-      "bytes": 8048
+      "bytes": 9311
     },
     {
       "path": "src/routes/_authenticated/configuracoes.tsx",
-      "bytes": 11018
+      "bytes": 11529
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
@@ -1588,6 +1588,10 @@
       "target": "@/lib/utils"
     },
     {
+      "source": "src/routes/_authenticated/relatorios.tsx",
+      "target": "@/hooks/use-ocultar-valores"
+    },
+    {
       "source": "src/routes/_authenticated/configuracoes.tsx",
       "target": "@tanstack/react-router"
     },
@@ -1638,6 +1642,10 @@
     {
       "source": "src/routes/_authenticated/configuracoes.tsx",
       "target": "@/lib/formato"
+    },
+    {
+      "source": "src/routes/_authenticated/configuracoes.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     },
     {
       "source": "src/routes/_authenticated/route.tsx",
