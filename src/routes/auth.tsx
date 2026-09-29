@@ -14,7 +14,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { semearDadosIniciais } from "@/lib/dados";
 
 export const Route = createFileRoute("/auth")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Entrar | D'Sales Barbearia" },
@@ -40,9 +39,20 @@ function Auth() {
 
   // Se já estiver logado, vai direto para o painel
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navegar({ to: "/painel", replace: true });
-    });
+    let ativo = true;
+
+    void supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (ativo && data.user) navegar({ to: "/painel", replace: true });
+      })
+      .catch((erro: unknown) => {
+        console.error("Não foi possível verificar a sessão.", erro);
+      });
+
+    return () => {
+      ativo = false;
+    };
   }, [navegar]);
 
   async function enviar(evento: React.FormEvent) {
