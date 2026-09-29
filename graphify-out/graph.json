@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:23:21.499384+00:00",
+  "generated_at": "2026-09-29T00:27:36.525579+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -111,7 +111,7 @@
     },
     {
       "path": "src/routes/auth.tsx",
-      "bytes": 4301
+      "bytes": 4505
     },
     {
       "path": "src/routes/__root.tsx",
@@ -143,11 +143,11 @@
     },
     {
       "path": "src/integrations/supabase/previewAuthStorage.ts",
-      "bytes": 4336
+      "bytes": 4565
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "bytes": 8740
+      "bytes": 8741
     },
     {
       "path": "src/integrations/supabase/client.ts",
