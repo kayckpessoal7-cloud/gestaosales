@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T00:45:07.068009+00:00",
+  "generated_at": "2026-09-29T01:11:19.998063+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -83,7 +83,7 @@
     },
     {
       "path": "src/components/ListaMovimentacoes.tsx",
-      "bytes": 5577
+      "bytes": 5916
     },
     {
       "path": "src/lib/error-page.ts",
@@ -347,11 +347,11 @@
     },
     {
       "path": "src/routes/_authenticated/historico.tsx",
-      "bytes": 10756
+      "bytes": 11366
     },
     {
       "path": "src/routes/_authenticated/saidas.tsx",
-      "bytes": 4058
+      "bytes": 4580
     },
     {
       "path": "src/routes/_authenticated/relatorios.tsx",
@@ -363,15 +363,15 @@
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
-      "bytes": 3376
+      "bytes": 4474
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 20699
+      "bytes": 20065
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
-      "bytes": 2782
+      "bytes": 3089
     },
     {
       "path": "drizzle/migrations/0000_criar_estrutura_financeira_barbearia.sql",
@@ -642,6 +642,10 @@
     {
       "source": "src/components/ListaMovimentacoes.tsx",
       "target": "@/lib/utils"
+    },
+    {
+      "source": "src/components/ListaMovimentacoes.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     },
     {
       "source": "src/lib/dados.ts",
@@ -1496,6 +1500,10 @@
       "target": "@/lib/formato"
     },
     {
+      "source": "src/routes/_authenticated/historico.tsx",
+      "target": "@/hooks/use-ocultar-valores"
+    },
+    {
       "source": "src/routes/_authenticated/saidas.tsx",
       "target": "@tanstack/react-router"
     },
@@ -1534,6 +1542,10 @@
     {
       "source": "src/routes/_authenticated/saidas.tsx",
       "target": "@/lib/formato"
+    },
+    {
+      "source": "src/routes/_authenticated/saidas.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     },
     {
       "source": "src/routes/_authenticated/relatorios.tsx",
@@ -1641,6 +1653,10 @@
     },
     {
       "source": "src/routes/_authenticated/route.tsx",
+      "target": "@/hooks/use-ocultar-valores"
+    },
+    {
+      "source": "src/routes/_authenticated/route.tsx",
       "target": "@/integrations/supabase/client"
     },
     {
@@ -1738,6 +1754,10 @@
     {
       "source": "src/routes/_authenticated/entradas.tsx",
       "target": "@/lib/formato"
+    },
+    {
+      "source": "src/routes/_authenticated/entradas.tsx",
+      "target": "@/hooks/use-ocultar-valores"
     }
   ]
 }
