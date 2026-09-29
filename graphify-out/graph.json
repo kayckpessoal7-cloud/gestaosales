@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T01:35:26.406845+00:00",
+  "generated_at": "2026-09-29T23:08:15.445060+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -147,7 +147,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "bytes": 8741
+      "bytes": 8740
     },
     {
       "path": "src/integrations/supabase/client.ts",
