@@ -195,7 +195,7 @@ function Relatorios() {
         </Card>
       </div>
 
-      <MetaFaturamento faturamento={dados.faturamentoMes} />
+      <MetaFaturamento faturamento={dados.faturamentoMes} oculto={oculto} />
 
       <Card>
         <CardHeader>
