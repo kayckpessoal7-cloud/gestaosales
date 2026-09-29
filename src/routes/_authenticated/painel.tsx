@@ -25,6 +25,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   noPeriodo,
   somar,
@@ -63,12 +64,14 @@ export const Route = createFileRoute("/_authenticated/painel")({
 });
 
 const CORES_PIZZA = [
-  "oklch(0.78 0.13 85)",
-  "oklch(0.65 0.2 25)",
-  "oklch(0.72 0.17 152)",
-  "oklch(0.65 0.13 240)",
-  "oklch(0.7 0.14 300)",
-  "oklch(0.8 0.1 60)",
+  "#d97706",
+  "#10b981",
+  "#ef4444",
+  "#3b82f6",
+  "#a855f7",
+  "#f59e0b",
+  "#ec4899",
+  "#14b8a6",
 ];
 
 const VALOR_OCULTO = "R$\u00A0••••••";
@@ -428,43 +431,104 @@ function Painel() {
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="text-base">Despesas por categoria (mês)</CardTitle>
+            <CardTitle className="text-base">Despesas por Categoria</CardTitle>
           </CardHeader>
-          <CardContent className="h-64">
+          <CardContent className="flex flex-1 flex-col pb-6">
             {resumo.despesas.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhuma despesa registrada no mês.</p>
-            ) : oculto ? (
-              <div className="flex h-full flex-col items-center justify-center gap-2 transition-opacity duration-200">
-                <EyeOff className="h-10 w-10 text-muted-foreground/40" />
-                <p className="text-sm text-muted-foreground">Valores ocultos</p>
+              <div className="flex h-full min-h-48 items-center justify-center">
+                <p className="text-sm text-muted-foreground">Nenhuma despesa registrada no mês.</p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={resumo.despesas}
-                    dataKey="valor"
-                    nameKey="nome"
-                    outerRadius="78%"
-                    label={false}
-                  >
-                    {resumo.despesas.map((_, i) => (
-                      <Cell key={i} fill={CORES_PIZZA[i % CORES_PIZZA.length]} />
+              <>
+                {oculto ? (
+                  <div className="relative mb-6 flex h-48 w-full flex-col items-center justify-center gap-2 transition-opacity duration-200">
+                    <EyeOff className="h-10 w-10 text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">Valores ocultos</p>
+                  </div>
+                ) : (
+                  <div className="relative mb-6 h-48 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={resumo.despesas}
+                          dataKey="valor"
+                          nameKey="nome"
+                          innerRadius="65%"
+                          outerRadius="90%"
+                          paddingAngle={3}
+                          stroke="none"
+                          cornerRadius={6}
+                          animationDuration={800}
+                        >
+                          {resumo.despesas.map((_, i) => (
+                            <Cell key={i} fill={CORES_PIZZA[i % CORES_PIZZA.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          cursor={false}
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length > 0) {
+                              const d = payload[0]?.payload as (typeof resumo.despesas)[number] | undefined;
+                              if (!d) return null;
+                              const percent = resumo.gastoMes > 0 ? ((d.valor / resumo.gastoMes) * 100).toFixed(1).replace(".", ",") : "0,0";
+                              return (
+                                <div
+                                  className="rounded-xl border bg-[#1c1a14] p-3 text-sm shadow-2xl"
+                                  style={{ borderColor: "rgba(255,255,255,0.1)" }}
+                                >
+                                  <p className="mb-2 font-semibold text-white">{d.nome}</p>
+                                  <div className="space-y-1">
+                                    <div className="flex items-center justify-between gap-6">
+                                      <span className="text-muted-foreground">Valor</span>
+                                      <span className="font-medium text-white">
+                                        {formatarMoeda(d.valor)}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-6">
+                                      <span className="text-muted-foreground">Fatia</span>
+                                      <span className="font-medium text-white">
+                                        {percent}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+                      <span className="text-xs text-muted-foreground">Total despesas</span>
+                      <span className="text-xl font-bold text-white">{formatarMoeda(resumo.gastoMes)}</span>
+                    </div>
+                  </div>
+                )}
+
+                <ScrollArea className="h-[140px] w-full pr-3">
+                  <ul className="space-y-2.5">
+                    {resumo.despesas.map((d, i) => (
+                      <li key={i} className="flex items-center justify-between text-sm">
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span
+                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: oculto ? "#3f3f46" : CORES_PIZZA[i % CORES_PIZZA.length] }}
+                          />
+                          <span className={cn("truncate transition-opacity duration-200", oculto && "select-none")}>
+                            {oculto ? "••••••" : d.nome}
+                          </span>
+                        </span>
+                        <span className={cn("shrink-0 font-medium transition-opacity duration-200", oculto && "text-muted-foreground select-none")}>
+                          {oculto ? "R$\u00A0••••" : formatarMoeda(d.valor)}
+                        </span>
+                      </li>
                     ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(v: number) => formatarMoeda(v)}
-                    contentStyle={{
-                      background: "oklch(0.22 0.01 90)",
-                      border: "1px solid oklch(0.32 0.015 88)",
-                      borderRadius: 8,
-                    }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 11 }} />
-                </PieChart>
-              </ResponsiveContainer>
+                  </ul>
+                </ScrollArea>
+              </>
             )}
           </CardContent>
         </Card>
