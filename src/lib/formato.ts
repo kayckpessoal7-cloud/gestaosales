@@ -160,8 +160,12 @@ export function dataHoraCuiabaParaUTC(dataISO: string, hora: string): string {
   for (let tentativa = 0; tentativa < 2; tentativa += 1) {
     const p = partesEmCuiaba(new Date(instante));
     const exibidoComoUTC = Date.UTC(
-      Number(p.ano), Number(p.mes) - 1, Number(p.dia),
-      Number(p.hora), Number(p.minuto), Number(p.segundo),
+      Number(p.ano),
+      Number(p.mes) - 1,
+      Number(p.dia),
+      Number(p.hora),
+      Number(p.minuto),
+      Number(p.segundo),
     );
     instante += Date.UTC(ano, mes - 1, dia, horas, minutos) - exibidoComoUTC;
   }
@@ -177,12 +181,14 @@ export function formatarDataHoraAtualCuiaba(data: Date): { hora: string; data: s
     second: "2-digit",
     hourCycle: "h23",
   });
-  const dataFormatada = data.toLocaleDateString("pt-BR", {
-    timeZone: FUSO_CUIABA,
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).replace("-feira", "");
+  const dataFormatada = data
+    .toLocaleDateString("pt-BR", {
+      timeZone: FUSO_CUIABA,
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    .replace("-feira", "");
   return { hora, data: dataFormatada };
 }

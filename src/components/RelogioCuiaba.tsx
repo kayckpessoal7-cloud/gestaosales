@@ -13,12 +13,19 @@ export function RelogioCuiaba({ className }: { className?: string }) {
     return () => window.clearInterval(intervalo);
   }, []);
 
-  const exibicao = agora ? formatarDataHoraAtualCuiaba(agora) : { hora: "--:--:--", data: "---, --/--/----" };
+  const exibicao = agora
+    ? formatarDataHoraAtualCuiaba(agora)
+    : { hora: "--:--:--", data: "---, --/--/----" };
 
   return (
-    <div className={cn("min-w-[5.75rem] text-right tabular-nums", className)} aria-label="Horário atual em Cuiabá">
+    <div
+      className={cn("min-w-[5.75rem] text-right tabular-nums", className)}
+      aria-label="Horário atual em Cuiabá"
+    >
       <p className="text-sm font-semibold leading-tight text-primary">{exibicao.hora}</p>
-      <p className="whitespace-nowrap text-[10px] leading-tight text-muted-foreground">{exibicao.data}</p>
+      <p className="whitespace-nowrap text-[10px] leading-tight text-muted-foreground">
+        {exibicao.data}
+      </p>
     </div>
   );
 }

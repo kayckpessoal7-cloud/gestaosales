@@ -22,7 +22,13 @@ import { formatarData, formatarMovimentacaoDataHora, formatarMoeda } from "@/lib
 import { cn } from "@/lib/utils";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
-export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
+export function ListaMovimentacoes({
+  itens,
+  usarDataRelativa = false,
+}: {
+  itens: Movimentacao[];
+  usarDataRelativa?: boolean;
+}) {
   const { data: barbeiros = [] } = useBarbeiros();
   const excluir = useExcluirMovimentacao();
   const { oculto } = useOcultarValores();
@@ -94,17 +100,34 @@ export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens:
             className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-card px-3 py-3"
           >
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold transition-opacity duration-200">{oculto ? "••••••" : m.categoria}</p>
+              <p className="truncate text-sm font-semibold transition-opacity duration-200">
+                {oculto ? "••••••" : m.categoria}
+              </p>
               <p className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200">
                 {oculto ? (
                   "••••••"
                 ) : (
                   <>
-                    <span className="shrink-0">{formatarMovimentacaoDataHora(m.data, m.criado_em, m.hora_informada, usarDataRelativa)}</span>
+                    <span className="shrink-0">
+                      {formatarMovimentacaoDataHora(
+                        m.data,
+                        m.criado_em,
+                        m.hora_informada,
+                        usarDataRelativa,
+                      )}
+                    </span>
                     <span className="shrink-0">·</span>
                     <span className="min-w-0 truncate">{m.forma_pagamento}</span>
-                    {nomeBarbeiro(m.barbeiro_id) && <span className="hidden shrink-0 sm:inline">· {nomeBarbeiro(m.barbeiro_id)}</span>}
-                    {m.despesa_tipo && <span className="hidden shrink-0 sm:inline">· {m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}</span>}
+                    {nomeBarbeiro(m.barbeiro_id) && (
+                      <span className="hidden shrink-0 sm:inline">
+                        · {nomeBarbeiro(m.barbeiro_id)}
+                      </span>
+                    )}
+                    {m.despesa_tipo && (
+                      <span className="hidden shrink-0 sm:inline">
+                        · {m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}
+                      </span>
+                    )}
                   </>
                 )}
               </p>
@@ -116,12 +139,23 @@ export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens:
               <span
                 className={cn(
                   "mr-1 text-sm font-bold transition-opacity duration-200",
-                  oculto ? "text-muted-foreground select-none" : m.tipo === "entrada" ? "text-entrada" : "text-saida",
+                  oculto
+                    ? "text-muted-foreground select-none"
+                    : m.tipo === "entrada"
+                      ? "text-entrada"
+                      : "text-saida",
                 )}
               >
-                {oculto ? "R$\u00A0••••" : `${m.tipo === "entrada" ? "+" : "−"} ${formatarMoeda(m.valor)}`}
+                {oculto
+                  ? "R$\u00A0••••"
+                  : `${m.tipo === "entrada" ? "+" : "−"} ${formatarMoeda(m.valor)}`}
               </span>
-              <Button size="icon" variant="ghost" onClick={() => setEditando(m)} aria-label="Editar">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setEditando(m)}
+                aria-label="Editar"
+              >
                 <Pencil className="h-4 w-4" />
               </Button>
               <Button

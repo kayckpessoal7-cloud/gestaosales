@@ -6,12 +6,7 @@ import { Download, FileText, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { ListaMovimentacoes } from "@/components/ListaMovimentacoes";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,7 +25,13 @@ import {
   useCategorias,
   useMovimentacoes,
 } from "@/lib/dados";
-import { formatarData, formatarMovimentacaoDataHora, formatarMoeda, hojeISO, somarDias } from "@/lib/formato";
+import {
+  formatarData,
+  formatarMovimentacaoDataHora,
+  formatarMoeda,
+  hojeISO,
+  somarDias,
+} from "@/lib/formato";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { ValorOcultavel } from "@/components/ValorOcultavel";
 
@@ -101,7 +102,9 @@ function Historico() {
     ];
     const linhas = filtradas.map((m) => [
       formatarData(m.data),
-      m.hora_informada ? formatarMovimentacaoDataHora(m.data, m.criado_em, true).split(" às ")[1] ?? "" : "",
+      m.hora_informada
+        ? (formatarMovimentacaoDataHora(m.data, m.criado_em, true).split(" às ")[1] ?? "")
+        : "",
       m.tipo === "entrada" ? "Entrada" : "Saída",
       m.categoria,
       m.forma_pagamento,
@@ -166,11 +169,21 @@ function Historico() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-1">
               <Label>De</Label>
-              <Input type="date" value={de} onChange={(e) => setDe(e.target.value)} className="h-11" />
+              <Input
+                type="date"
+                value={de}
+                onChange={(e) => setDe(e.target.value)}
+                className="h-11"
+              />
             </div>
             <div className="space-y-1">
               <Label>Até</Label>
-              <Input type="date" value={ate} onChange={(e) => setAte(e.target.value)} className="h-11" />
+              <Input
+                type="date"
+                value={ate}
+                onChange={(e) => setAte(e.target.value)}
+                className="h-11"
+              />
             </div>
             <div className="space-y-1">
               <Label>Tipo</Label>
@@ -250,7 +263,12 @@ function Historico() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button variant="outline" className="h-11" onClick={exportarCSV} disabled={oculto}>
+                    <Button
+                      variant="outline"
+                      className="h-11"
+                      onClick={exportarCSV}
+                      disabled={oculto}
+                    >
                       <Download className="mr-1 h-4 w-4" /> Exportar CSV
                     </Button>
                   </div>
@@ -265,7 +283,12 @@ function Historico() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button variant="outline" className="h-11" onClick={exportarPDF} disabled={oculto}>
+                    <Button
+                      variant="outline"
+                      className="h-11"
+                      onClick={exportarPDF}
+                      disabled={oculto}
+                    >
                       <FileText className="mr-1 h-4 w-4" /> Exportar PDF
                     </Button>
                   </div>
@@ -311,7 +334,10 @@ function Historico() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        <ValorOcultavel oculto={oculto} mascara="••">{filtradas.length}</ValorOcultavel> movimentação(ões)
+        <ValorOcultavel oculto={oculto} mascara="••">
+          {filtradas.length}
+        </ValorOcultavel>{" "}
+        movimentação(ões)
       </p>
       <ListaMovimentacoes itens={filtradas} />
     </div>

@@ -3,13 +3,7 @@
  * Também monta o layout do sistema (menu lateral no computador
  * e menu inferior no celular).
  */
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  redirect,
-  useRouterState,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
   Eye,
@@ -82,7 +76,11 @@ function Layout() {
             onClick={alternar}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            {oculto ? <EyeOff className="h-5 w-5 shrink-0" /> : <Eye className="h-5 w-5 shrink-0" />}
+            {oculto ? (
+              <EyeOff className="h-5 w-5 shrink-0" />
+            ) : (
+              <Eye className="h-5 w-5 shrink-0" />
+            )}
             {oculto ? "Mostrar valores" : "Esconder valores"}
           </button>
         </div>

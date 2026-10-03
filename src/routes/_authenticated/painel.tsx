@@ -129,7 +129,8 @@ function Painel() {
   const { oculto, alternar } = useOcultarValores();
 
   const formatar = useCallback(
-    (valor: number, curto = false) => (oculto ? (curto ? VALOR_OCULTO_CURTO : VALOR_OCULTO) : formatarMoeda(valor)),
+    (valor: number, curto = false) =>
+      oculto ? (curto ? VALOR_OCULTO_CURTO : VALOR_OCULTO) : formatarMoeda(valor),
     [oculto],
   );
 
@@ -145,8 +146,24 @@ function Painel() {
 
     // Gráfico dos últimos 30 dias
     const inicio = somarDias(hoje, -29);
-    const DIAS_SEMANA_NOMES = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-    const dias: { dia: string; dataCompleta: string; dataCompletaLonga: string; Entradas: number; Saídas: number; Saldo: number; isHoje: boolean }[] = [];
+    const DIAS_SEMANA_NOMES = [
+      "Domingo",
+      "Segunda-feira",
+      "Terça-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "Sábado",
+    ];
+    const dias: {
+      dia: string;
+      dataCompleta: string;
+      dataCompletaLonga: string;
+      Entradas: number;
+      Saídas: number;
+      Saldo: number;
+      isHoje: boolean;
+    }[] = [];
     let temMovimentacao = false;
     let totalEntradas30 = 0;
     let totalSaidas30 = 0;
@@ -183,7 +200,9 @@ function Painel() {
     // Despesas por categoria (mês atual)
     const saidasMes = noPeriodo(saidas, inicioDoMes(hoje), hoje);
     const porCategoria = new Map<string, number>();
-    saidasMes.forEach((m) => porCategoria.set(m.categoria, (porCategoria.get(m.categoria) ?? 0) + m.valor));
+    saidasMes.forEach((m) =>
+      porCategoria.set(m.categoria, (porCategoria.get(m.categoria) ?? 0) + m.valor),
+    );
     const despesas = [...porCategoria.entries()]
       .map(([nome, valor]) => ({ nome, valor }))
       .sort((a, b) => b.valor - a.valor);
@@ -254,7 +273,12 @@ function Painel() {
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <div className="min-w-0 text-sm">
               <p className="font-semibold text-primary">Despesas fixas deste mês</p>
-              <p className={cn("text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
+              <p
+                className={cn(
+                  "text-muted-foreground transition-opacity duration-200",
+                  oculto && "select-none",
+                )}
+              >
                 {oculto
                   ? "••••••"
                   : resumo.lembretes
@@ -267,12 +291,48 @@ function Painel() {
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-        <CardValor titulo="Faturamento hoje" valor={resumo.doDia} cor="entrada" oculto={oculto} formatar={formatar} />
-        <CardValor titulo="Faturamento semana" valor={resumo.daSemana} cor="entrada" oculto={oculto} formatar={formatar} />
-        <CardValor titulo="Faturamento mês" valor={resumo.doMes} cor="entrada" oculto={oculto} formatar={formatar} />
-        <CardValor titulo="Total recebido (mês)" valor={resumo.doMes} cor="entrada" oculto={oculto} formatar={formatar} />
-        <CardValor titulo="Total gasto (mês)" valor={resumo.gastoMes} cor="saida" oculto={oculto} formatar={formatar} />
-        <CardValor titulo="Saldo do mês" valor={resumo.saldoMes} cor="saldo" oculto={oculto} formatar={formatar} />
+        <CardValor
+          titulo="Faturamento hoje"
+          valor={resumo.doDia}
+          cor="entrada"
+          oculto={oculto}
+          formatar={formatar}
+        />
+        <CardValor
+          titulo="Faturamento semana"
+          valor={resumo.daSemana}
+          cor="entrada"
+          oculto={oculto}
+          formatar={formatar}
+        />
+        <CardValor
+          titulo="Faturamento mês"
+          valor={resumo.doMes}
+          cor="entrada"
+          oculto={oculto}
+          formatar={formatar}
+        />
+        <CardValor
+          titulo="Total recebido (mês)"
+          valor={resumo.doMes}
+          cor="entrada"
+          oculto={oculto}
+          formatar={formatar}
+        />
+        <CardValor
+          titulo="Total gasto (mês)"
+          valor={resumo.gastoMes}
+          cor="saida"
+          oculto={oculto}
+          formatar={formatar}
+        />
+        <CardValor
+          titulo="Saldo do mês"
+          valor={resumo.saldoMes}
+          cor="saldo"
+          oculto={oculto}
+          formatar={formatar}
+        />
       </div>
 
       <Card>
@@ -346,7 +406,10 @@ function Painel() {
                                 {formatarMoeda(d.Saídas)}
                               </span>
                             </div>
-                            <div className="mt-2 flex items-center justify-between gap-6 border-t pt-2" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+                            <div
+                              className="mt-2 flex items-center justify-between gap-6 border-t pt-2"
+                              style={{ borderColor: "rgba(255,255,255,0.1)" }}
+                            >
                               <span className="font-semibold text-white">Saldo</span>
                               <span
                                 className="font-bold"
@@ -434,9 +497,13 @@ function Painel() {
                           cursor={false}
                           content={({ active, payload }) => {
                             if (active && payload && payload.length > 0) {
-                              const d = payload[0]?.payload as (typeof resumo.despesas)[number] | undefined;
+                              const d = payload[0]?.payload as
+                                (typeof resumo.despesas)[number] | undefined;
                               if (!d) return null;
-                              const percent = resumo.gastoMes > 0 ? ((d.valor / resumo.gastoMes) * 100).toFixed(1).replace(".", ",") : "0,0";
+                              const percent =
+                                resumo.gastoMes > 0
+                                  ? ((d.valor / resumo.gastoMes) * 100).toFixed(1).replace(".", ",")
+                                  : "0,0";
                               return (
                                 <div
                                   className="rounded-xl border bg-[#1c1a14] p-3 text-sm shadow-2xl"
@@ -452,9 +519,7 @@ function Painel() {
                                     </div>
                                     <div className="flex items-center justify-between gap-6">
                                       <span className="text-muted-foreground">Fatia</span>
-                                      <span className="font-medium text-white">
-                                        {percent}%
-                                      </span>
+                                      <span className="font-medium text-white">{percent}%</span>
                                     </div>
                                   </div>
                                 </div>
@@ -467,7 +532,9 @@ function Painel() {
                     </ResponsiveContainer>
                     <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="text-xs text-muted-foreground">Total despesas</span>
-                      <span className="text-xl font-bold text-white">{formatarMoeda(resumo.gastoMes)}</span>
+                      <span className="text-xl font-bold text-white">
+                        {formatarMoeda(resumo.gastoMes)}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -479,13 +546,27 @@ function Painel() {
                         <span className="flex min-w-0 items-center gap-2">
                           <span
                             className="h-2.5 w-2.5 shrink-0 rounded-full"
-                            style={{ backgroundColor: oculto ? "#3f3f46" : CORES_PIZZA[i % CORES_PIZZA.length] }}
+                            style={{
+                              backgroundColor: oculto
+                                ? "#3f3f46"
+                                : CORES_PIZZA[i % CORES_PIZZA.length],
+                            }}
                           />
-                          <span className={cn("truncate transition-opacity duration-200", oculto && "select-none")}>
+                          <span
+                            className={cn(
+                              "truncate transition-opacity duration-200",
+                              oculto && "select-none",
+                            )}
+                          >
                             {oculto ? "••••••" : d.nome}
                           </span>
                         </span>
-                        <span className={cn("shrink-0 font-medium transition-opacity duration-200", oculto && "text-muted-foreground select-none")}>
+                        <span
+                          className={cn(
+                            "shrink-0 font-medium transition-opacity duration-200",
+                            oculto && "text-muted-foreground select-none",
+                          )}
+                        >
                           {oculto ? "R$\u00A0••••" : formatarMoeda(d.valor)}
                         </span>
                       </li>
@@ -512,17 +593,46 @@ function Painel() {
                 className="flex items-center justify-between gap-3 rounded-lg bg-secondary/50 px-3 py-2"
               >
                 <div className="min-w-0">
-                  <p className={cn("truncate text-sm font-medium transition-opacity duration-200", oculto && "select-none")}>
+                  <p
+                    className={cn(
+                      "truncate text-sm font-medium transition-opacity duration-200",
+                      oculto && "select-none",
+                    )}
+                  >
                     {oculto ? "••••••" : m.categoria}
                   </p>
-                   <p className={cn("flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
-                     {oculto ? "•••• · ••••" : <><span className="shrink-0">{formatarMovimentacaoDataHora(m.data, m.criado_em, m.hora_informada, true)}</span><span className="shrink-0">·</span><span className="min-w-0 truncate">{m.forma_pagamento}</span></>}
-                   </p>
+                  <p
+                    className={cn(
+                      "flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200",
+                      oculto && "select-none",
+                    )}
+                  >
+                    {oculto ? (
+                      "•••• · ••••"
+                    ) : (
+                      <>
+                        <span className="shrink-0">
+                          {formatarMovimentacaoDataHora(
+                            m.data,
+                            m.criado_em,
+                            m.hora_informada,
+                            true,
+                          )}
+                        </span>
+                        <span className="shrink-0">·</span>
+                        <span className="min-w-0 truncate">{m.forma_pagamento}</span>
+                      </>
+                    )}
+                  </p>
                 </div>
                 <span
                   className={cn(
                     "shrink-0 text-sm font-semibold transition-opacity duration-200",
-                    oculto ? "text-muted-foreground select-none" : m.tipo === "entrada" ? "text-entrada" : "text-saida",
+                    oculto
+                      ? "text-muted-foreground select-none"
+                      : m.tipo === "entrada"
+                        ? "text-entrada"
+                        : "text-saida",
                   )}
                 >
                   {oculto

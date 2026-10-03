@@ -35,7 +35,13 @@ import {
   type TipoDespesa,
   type TipoMovimentacao,
 } from "@/lib/dados";
-import { agoraCuiaba, dataHoraCuiabaParaUTC, formatarHoraCuiaba, formatarMoeda, valorParaNumero } from "@/lib/formato";
+import {
+  agoraCuiaba,
+  dataHoraCuiabaParaUTC,
+  formatarHoraCuiaba,
+  formatarMoeda,
+  valorParaNumero,
+} from "@/lib/formato";
 
 interface Props {
   aberto: boolean;
@@ -236,21 +242,20 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
           </div>
 
           <div className="space-y-2">
-              <Label>Forma de pagamento</Label>
-              <Select value={formaPagamento} onValueChange={setFormaPagamento}>
-                <SelectTrigger className="h-12 w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {FORMAS_PAGAMENTO.map((f) => (
-                    <SelectItem key={f} value={f}>
-                      {f}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Label>Forma de pagamento</Label>
+            <Select value={formaPagamento} onValueChange={setFormaPagamento}>
+              <SelectTrigger className="h-12 w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FORMAS_PAGAMENTO.map((f) => (
+                  <SelectItem key={f} value={f}>
+                    {f}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-
 
           {tipoAtual === "entrada" && (
             <div className="space-y-2">
@@ -275,10 +280,7 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
             <>
               <div className="space-y-2">
                 <Label>Tipo de despesa</Label>
-                <Select
-                  value={despesaTipo}
-                  onValueChange={(v) => setDespesaTipo(v as TipoDespesa)}
-                >
+                <Select value={despesaTipo} onValueChange={(v) => setDespesaTipo(v as TipoDespesa)}>
                   <SelectTrigger className="h-12 w-full">
                     <SelectValue />
                   </SelectTrigger>
@@ -306,7 +308,9 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
                     id="venc"
                     inputMode="numeric"
                     value={diaVencimento}
-                    onChange={(e) => setDiaVencimento(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                    onChange={(e) =>
+                      setDiaVencimento(e.target.value.replace(/\D/g, "").slice(0, 2))
+                    }
                     className="h-12"
                   />
                 </div>

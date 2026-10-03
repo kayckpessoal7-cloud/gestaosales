@@ -177,15 +177,7 @@ export function useBarbeiros() {
 export function useSalvarBarbeiro() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      id,
-      nome,
-      comissao,
-    }: {
-      id?: string;
-      nome: string;
-      comissao: number;
-    }) => {
+    mutationFn: async ({ id, nome, comissao }: { id?: string; nome: string; comissao: number }) => {
       if (id) {
         const { error } = await supabase.from("barbeiros").update({ nome, comissao }).eq("id", id);
         if (error) throw error;
