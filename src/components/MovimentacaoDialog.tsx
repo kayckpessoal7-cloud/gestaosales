@@ -35,7 +35,7 @@ import {
   type TipoDespesa,
   type TipoMovimentacao,
 } from "@/lib/dados";
-import { formatarMoeda, hojeISO, valorParaNumero } from "@/lib/formato";
+import { formatarMoeda, hojeISO, valorParaNumero, formatarData } from "@/lib/formato";
 
 interface Props {
   aberto: boolean;
@@ -156,6 +156,11 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
             {tipoAtual === "entrada"
               ? "Registre um recebimento da barbearia."
               : "Registre uma despesa da barbearia."}
+            {movimentacao?.criado_em && (
+              <span className="block mt-2 font-medium text-foreground/70">
+                Registrado em: {formatarData(movimentacao.data, movimentacao.criado_em)}
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
 

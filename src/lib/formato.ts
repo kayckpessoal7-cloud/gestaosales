@@ -10,17 +10,27 @@ export function formatarMoeda(valor: number): string {
 }
 
 /** Recebe "2026-09-19" (data do banco) e devolve "19/09/2026". */
-export function formatarData(dataISO: string): string {
+export function formatarData(dataISO: string, criadoEm?: string): string {
   const [ano, mes, dia] = dataISO.split("-");
   if (!ano || !mes || !dia) return dataISO;
-  return `${dia}/${mes}/${ano}`;
+  const dataStr = `${dia}/${mes}/${ano}`;
+  if (!criadoEm) return dataStr;
+  const hora = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Cuiaba",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(criadoEm));
+  return `${dataStr} às ${hora}`;
 }
 
 /** Data de hoje no formato aceito pelo banco (aaaa-mm-dd), no fuso local. */
 export function hojeISO(): string {
-  const agora = new Date();
-  const local = new Date(agora.getTime() - agora.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Cuiaba",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 }
 
 /** Soma (ou subtrai) dias de uma data no formato aaaa-mm-dd. */
@@ -79,7 +89,7 @@ export function rotuloCurto(dataISO: string): string {
  * ou a data formatada DD/MM/AAAA (4+ dias atrás).
  * Compara apenas dia/mês/ano no fuso America/Cuiaba.
  */
-export function formatarDataRelativa(dataISO: string): string {
+export function formatarDataRelativa(dataISO: string, criadoEm?: string): string {
   const partes = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Cuiaba",
     year: "numeric",
@@ -89,18 +99,30 @@ export function formatarDataRelativa(dataISO: string): string {
 
   const p = (t: string) => partes.find((x) => x.type === t)?.value ?? "00";
   const cuiabaStr = `${p("year")}-${p("month")}-${p("day")}`;
-  const dataFormatada = formatarData(dataISO);
+  const dataFormatadaBase = formatarData(dataISO);
+  const dataFormatadaCompleta = formatarData(dataISO, criadoEm);
 
   const dHoje = new Date(`${cuiabaStr}T00:00:00Z`);
   const dData = new Date(`${dataISO}T00:00:00Z`);
   const diffDias = Math.round((dHoje.getTime() - dData.getTime()) / 86400000);
 
-  if (diffDias === 0) return "Hoje";
-  if (diffDias === 1) return "Ontem";
-  if (diffDias >= 2 && diffDias <= 3) {
+  let textoBase = dataFormatadaBase;
+  if (diffDias === 0) textoBase = "Hoje";
+  else if (diffDias === 1) textoBase = "Ontem";
+  else if (diffDias >= 2 && diffDias <= 3) {
     const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-    return diasSemana[dData.getUTCDay()] ?? dataFormatada;
+    textoBase = diasSemana[dData.getUTCDay()] ?? dataFormatadaBase;
   }
 
-  return dataFormatada;
+  if (!criadoEm) return textoBase === dataFormatadaBase ? dataFormatadaCompleta : textoBase;
+  
+  if (textoBase === dataFormatadaBase) return dataFormatadaCompleta;
+
+  const hora = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Cuiaba",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(criadoEm));
+
+  return `${textoBase} às ${hora}`;
 }

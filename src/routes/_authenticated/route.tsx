@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
+import { Relogio } from "@/components/Relogio";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -54,8 +55,9 @@ function Layout() {
       {/* Menu lateral (computador) */}
       <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-border bg-sidebar p-4 lg:flex">
         <div className="flex flex-col gap-1 px-1 pb-6">
-          <Logo className="h-auto w-40" />
-          <p className="truncate text-xs text-muted-foreground">Controle financeiro</p>
+          <Logo className="h-auto w-40 mb-2" />
+          <Relogio />
+          <p className="truncate text-xs text-muted-foreground mt-2">Controle financeiro</p>
         </div>
         <nav className="flex flex-col gap-1">
           {MENU.map((item) => (
@@ -88,7 +90,10 @@ function Layout() {
 
       {/* Cabeçalho (celular) */}
       <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
-        <Logo className="h-9 w-auto" />
+        <div className="flex items-center gap-3 min-w-0">
+          <Logo className="h-9 w-auto shrink-0" />
+          <Relogio />
+        </div>
         <button
           type="button"
           onClick={alternar}

@@ -21,6 +21,7 @@ export interface Movimentacao {
   despesa_tipo: TipoDespesa | null;
   recorrente: boolean;
   dia_vencimento: number | null;
+  criado_em?: string;
 }
 
 export interface Categoria {
@@ -54,7 +55,7 @@ export function useMovimentacoes() {
       const { data, error } = await supabase
         .from("movimentacoes")
         .select(
-          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento",
+          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento, criado_em",
         )
         .order("data", { ascending: false })
         .order("criado_em", { ascending: false })
@@ -75,7 +76,7 @@ export function useSalvarMovimentacao() {
         const { error } = await supabase.from("movimentacoes").update(dados).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("movimentacoes").insert(dados);
+        const { error } = await supabase.from("movimentacoes").insert({ ...dados, criado_em: new Date().toISOString() });
         if (error) throw error;
       }
     },
