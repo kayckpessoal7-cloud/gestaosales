@@ -35,7 +35,7 @@ import {
 } from "@/lib/dados";
 import {
   formatarData,
-  formatarDataRelativa,
+  formatarMovimentacaoDataHora,
   formatarMoeda,
   hojeISO,
   inicioDaSemana,
@@ -166,8 +166,8 @@ function Painel() {
         melhorDiaLabel = rotuloCurto(data);
       }
 
-      const dObj = new Date(`${data}T12:00:00`);
-      const diaSemana = DIAS_SEMANA_NOMES[dObj.getDay()] ?? "";
+      const dObj = new Date(`${data}T12:00:00Z`);
+      const diaSemana = DIAS_SEMANA_NOMES[dObj.getUTCDay()] ?? "";
 
       dias.push({
         dia: rotuloCurto(data),
@@ -515,9 +515,9 @@ function Painel() {
                   <p className={cn("truncate text-sm font-medium transition-opacity duration-200", oculto && "select-none")}>
                     {oculto ? "••••••" : m.categoria}
                   </p>
-                  <p className={cn("truncate text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
-                    {oculto ? "•••• · ••••" : `${formatarDataRelativa(m.data)} · ${m.forma_pagamento}`}
-                  </p>
+                   <p className={cn("flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
+                     {oculto ? "•••• · ••••" : <><span className="shrink-0">{formatarMovimentacaoDataHora(m.data, m.criado_em, m.hora_informada, true)}</span><span className="shrink-0">·</span><span className="min-w-0 truncate">{m.forma_pagamento}</span></>}
+                   </p>
                 </div>
                 <span
                   className={cn(

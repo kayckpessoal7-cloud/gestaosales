@@ -35,7 +35,7 @@ import {
   type TipoDespesa,
   type TipoMovimentacao,
 } from "@/lib/dados";
-import { formatarMoeda, hojeISO, valorParaNumero } from "@/lib/formato";
+import { agoraCuiaba, dataHoraCuiabaParaUTC, formatarHoraCuiaba, formatarMoeda, valorParaNumero } from "@/lib/formato";
 
 interface Props {
   aberto: boolean;
@@ -53,7 +53,8 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
   const salvar = useSalvarMovimentacao();
 
   const [valor, setValor] = useState("");
-  const [data, setData] = useState(hojeISO());
+  const [data, setData] = useState(() => agoraCuiaba().data);
+  const [hora, setHora] = useState(() => agoraCuiaba().hora);
   const [categoria, setCategoria] = useState("");
   const [formaPagamento, setFormaPagamento] = useState<string>(FORMAS_PAGAMENTO[0]);
   const [descricao, setDescricao] = useState("");
@@ -78,6 +79,7 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
     if (movimentacao) {
       setValor(String(movimentacao.valor).replace(".", ","));
       setData(movimentacao.data);
+      setHora(movimentacao.hora_informada ? formatarHoraCuiaba(movimentacao.criado_em) : "");
       setCategoria(movimentacao.categoria);
       setFormaPagamento(movimentacao.forma_pagamento);
       setDescricao(movimentacao.descricao ?? "");
@@ -87,7 +89,9 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
       setDiaVencimento(String(movimentacao.dia_vencimento ?? 5));
     } else {
       setValor("");
-      setData(hojeISO());
+      const agora = agoraCuiaba();
+      setData(agora.data);
+      setHora(agora.hora);
       setCategoria("");
       setFormaPagamento(FORMAS_PAGAMENTO[0]);
       setDescricao("");
@@ -114,6 +118,10 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
       toast.error("Informe uma data válida.");
       return;
     }
+    if (!/^\d{2}:\d{2}$/.test(hora)) {
+      toast.error("Informe uma hora válida.");
+      return;
+    }
 
     try {
       await salvar.mutateAsync({
@@ -130,6 +138,8 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
           recorrente: tipoAtual === "saida" ? recorrente : false,
           dia_vencimento:
             tipoAtual === "saida" && recorrente ? Number(diaVencimento) || null : null,
+          criado_em: dataHoraCuiabaParaUTC(data, hora),
+          hora_informada: true,
         },
       });
       toast.success(
@@ -214,6 +224,18 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="hora">Hora (Cuiabá)</Label>
+              <Input
+                id="hora"
+                type="time"
+                value={hora}
+                onChange={(e) => setHora(e.target.value)}
+                className="h-12"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
               <Label>Forma de pagamento</Label>
               <Select value={formaPagamento} onValueChange={setFormaPagamento}>
                 <SelectTrigger className="h-12 w-full">
@@ -227,7 +249,6 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
                   ))}
                 </SelectContent>
               </Select>
-            </div>
           </div>
 
 

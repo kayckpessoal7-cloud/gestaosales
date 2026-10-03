@@ -21,6 +21,8 @@ export interface Movimentacao {
   despesa_tipo: TipoDespesa | null;
   recorrente: boolean;
   dia_vencimento: number | null;
+  criado_em: string;
+  hora_informada: boolean;
 }
 
 export interface Categoria {
@@ -54,7 +56,7 @@ export function useMovimentacoes() {
       const { data, error } = await supabase
         .from("movimentacoes")
         .select(
-          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento",
+          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento, criado_em, hora_informada",
         )
         .order("data", { ascending: false })
         .order("criado_em", { ascending: false })

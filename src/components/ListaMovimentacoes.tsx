@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MovimentacaoDialog } from "@/components/MovimentacaoDialog";
 import { useBarbeiros, useExcluirMovimentacao, type Movimentacao } from "@/lib/dados";
-import { formatarData, formatarDataRelativa, formatarMoeda } from "@/lib/formato";
+import { formatarData, formatarMovimentacaoDataHora, formatarMoeda } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
@@ -95,8 +95,18 @@ export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens:
           >
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold transition-opacity duration-200">{oculto ? "••••••" : m.categoria}</p>
-              <p className="truncate text-xs text-muted-foreground transition-opacity duration-200">
-                {oculto ? "••••••" : `${usarDataRelativa ? formatarDataRelativa(m.data) : formatarData(m.data)} · ${m.forma_pagamento}${nomeBarbeiro(m.barbeiro_id) ? ` · ${nomeBarbeiro(m.barbeiro_id)}` : ""}${m.despesa_tipo ? ` · ${m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}` : ""}`}
+              <p className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200">
+                {oculto ? (
+                  "••••••"
+                ) : (
+                  <>
+                    <span className="shrink-0">{formatarMovimentacaoDataHora(m.data, m.criado_em, m.hora_informada, usarDataRelativa)}</span>
+                    <span className="shrink-0">·</span>
+                    <span className="min-w-0 truncate">{m.forma_pagamento}</span>
+                    {nomeBarbeiro(m.barbeiro_id) && <span className="hidden shrink-0 sm:inline">· {nomeBarbeiro(m.barbeiro_id)}</span>}
+                    {m.despesa_tipo && <span className="hidden shrink-0 sm:inline">· {m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}</span>}
+                  </>
+                )}
               </p>
               {m.descricao && !oculto && (
                 <p className="truncate text-xs text-muted-foreground/80">{m.descricao}</p>

@@ -30,7 +30,7 @@ import {
   useCategorias,
   useMovimentacoes,
 } from "@/lib/dados";
-import { formatarData, formatarMoeda, hojeISO, somarDias } from "@/lib/formato";
+import { formatarData, formatarMovimentacaoDataHora, formatarMoeda, hojeISO, somarDias } from "@/lib/formato";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { ValorOcultavel } from "@/components/ValorOcultavel";
 
@@ -91,6 +91,7 @@ function Historico() {
   function exportarCSV() {
     const cabecalho = [
       "Data",
+      "Hora",
       "Tipo",
       "Categoria",
       "Forma de pagamento",
@@ -100,6 +101,7 @@ function Historico() {
     ];
     const linhas = filtradas.map((m) => [
       formatarData(m.data),
+      m.hora_informada ? formatarMovimentacaoDataHora(m.data, m.criado_em, true).split(" às ")[1] ?? "" : "",
       m.tipo === "entrada" ? "Entrada" : "Saída",
       m.categoria,
       m.forma_pagamento,
@@ -122,7 +124,7 @@ function Historico() {
     const linhas = filtradas
       .map(
         (m) => `<tr>
-          <td>${formatarData(m.data)}</td>
+          <td>${formatarMovimentacaoDataHora(m.data, m.criado_em, m.hora_informada)}</td>
           <td>${m.tipo === "entrada" ? "Entrada" : "Saída"}</td>
           <td>${m.categoria}</td>
           <td>${m.forma_pagamento}</td>

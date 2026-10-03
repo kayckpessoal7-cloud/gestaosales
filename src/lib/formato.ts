@@ -16,17 +16,41 @@ export function formatarData(dataISO: string): string {
   return `${dia}/${mes}/${ano}`;
 }
 
-/** Data de hoje no formato aceito pelo banco (aaaa-mm-dd), no fuso local. */
+export const FUSO_CUIABA = "America/Cuiaba";
+
+function partesEmCuiaba(data: Date) {
+  const partes = new Intl.DateTimeFormat("en-CA", {
+    timeZone: FUSO_CUIABA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(data);
+  const obter = (tipo: Intl.DateTimeFormatPartTypes) =>
+    partes.find((parte) => parte.type === tipo)?.value ?? "00";
+  return {
+    ano: obter("year"),
+    mes: obter("month"),
+    dia: obter("day"),
+    hora: obter("hour"),
+    minuto: obter("minute"),
+    segundo: obter("second"),
+  };
+}
+
+/** Data de hoje no formato aceito pelo banco (aaaa-mm-dd), no fuso de Cuiabá. */
 export function hojeISO(): string {
-  const agora = new Date();
-  const local = new Date(agora.getTime() - agora.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 10);
+  const p = partesEmCuiaba(new Date());
+  return `${p.ano}-${p.mes}-${p.dia}`;
 }
 
 /** Soma (ou subtrai) dias de uma data no formato aaaa-mm-dd. */
 export function somarDias(dataISO: string, dias: number): string {
-  const d = new Date(`${dataISO}T12:00:00`);
-  d.setDate(d.getDate() + dias);
+  const d = new Date(`${dataISO}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + dias);
   return d.toISOString().slice(0, 10);
 }
 
@@ -37,17 +61,17 @@ export function inicioDoMes(dataISO: string): string {
 
 /** Último dia do mês de uma data aaaa-mm-dd. */
 export function fimDoMes(dataISO: string): string {
-  const d = new Date(`${dataISO.slice(0, 7)}-01T12:00:00`);
-  d.setMonth(d.getMonth() + 1);
-  d.setDate(0);
+  const d = new Date(`${dataISO.slice(0, 7)}-01T12:00:00Z`);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
   return d.toISOString().slice(0, 10);
 }
 
 /** Segunda-feira da semana da data informada. */
 export function inicioDaSemana(dataISO: string): string {
-  const d = new Date(`${dataISO}T12:00:00`);
-  const diaSemana = (d.getDay() + 6) % 7; // 0 = segunda
-  d.setDate(d.getDate() - diaSemana);
+  const d = new Date(`${dataISO}T12:00:00Z`);
+  const diaSemana = (d.getUTCDay() + 6) % 7; // 0 = segunda
+  d.setUTCDate(d.getUTCDate() - diaSemana);
   return d.toISOString().slice(0, 10);
 }
 
@@ -80,15 +104,7 @@ export function rotuloCurto(dataISO: string): string {
  * Compara apenas dia/mês/ano no fuso America/Cuiaba.
  */
 export function formatarDataRelativa(dataISO: string): string {
-  const partes = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Cuiaba",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
-
-  const p = (t: string) => partes.find((x) => x.type === t)?.value ?? "00";
-  const cuiabaStr = `${p("year")}-${p("month")}-${p("day")}`;
+  const cuiabaStr = hojeISO();
   const dataFormatada = formatarData(dataISO);
 
   const dHoje = new Date(`${cuiabaStr}T00:00:00Z`);
@@ -103,4 +119,70 @@ export function formatarDataRelativa(dataISO: string): string {
   }
 
   return dataFormatada;
+}
+
+/** Hora HH:mm de um timestamp UTC, convertida para Cuiabá. */
+export function formatarHoraCuiaba(timestamp: string): string {
+  const data = new Date(timestamp);
+  if (Number.isNaN(data.getTime())) return "";
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: FUSO_CUIABA,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(data);
+}
+
+export function formatarMovimentacaoDataHora(
+  dataISO: string,
+  criadoEm: string,
+  horaInformada: boolean,
+  relativa = false,
+): string {
+  const data = relativa ? formatarDataRelativa(dataISO) : formatarData(dataISO);
+  if (!horaInformada) return data;
+  const hora = formatarHoraCuiaba(criadoEm);
+  return hora ? `${data} às ${hora}` : data;
+}
+
+/** Data e hora atuais nos campos do formulário, sempre em Cuiabá. */
+export function agoraCuiaba(): { data: string; hora: string } {
+  const p = partesEmCuiaba(new Date());
+  return { data: `${p.ano}-${p.mes}-${p.dia}`, hora: `${p.hora}:${p.minuto}` };
+}
+
+/** Converte uma data/hora civil de Cuiabá para o timestamp UTC armazenado no banco. */
+export function dataHoraCuiabaParaUTC(dataISO: string, hora: string): string {
+  const [ano, mes, dia] = dataISO.split("-").map(Number);
+  const [horas, minutos] = hora.split(":").map(Number);
+  let instante = Date.UTC(ano, mes - 1, dia, horas, minutos);
+
+  for (let tentativa = 0; tentativa < 2; tentativa += 1) {
+    const p = partesEmCuiaba(new Date(instante));
+    const exibidoComoUTC = Date.UTC(
+      Number(p.ano), Number(p.mes) - 1, Number(p.dia),
+      Number(p.hora), Number(p.minuto), Number(p.segundo),
+    );
+    instante += Date.UTC(ano, mes - 1, dia, horas, minutos) - exibidoComoUTC;
+  }
+
+  return new Date(instante).toISOString();
+}
+
+export function formatarDataHoraAtualCuiaba(data: Date): { hora: string; data: string } {
+  const hora = data.toLocaleTimeString("pt-BR", {
+    timeZone: FUSO_CUIABA,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  });
+  const dataFormatada = data.toLocaleDateString("pt-BR", {
+    timeZone: FUSO_CUIABA,
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).replace("-feira", "");
+  return { hora, data: dataFormatada };
 }
