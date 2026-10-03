@@ -22,7 +22,7 @@ import { formatarData, formatarDataRelativa, formatarMoeda } from "@/lib/formato
 import { cn } from "@/lib/utils";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 
-export function ListaMovimentacoes({ itens, usarDataRelativa = false }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
+export function ListaMovimentacoes({ itens, usarDataRelativa = true }: { itens: Movimentacao[]; usarDataRelativa?: boolean }) {
   const { data: barbeiros = [] } = useBarbeiros();
   const excluir = useExcluirMovimentacao();
   const { oculto } = useOcultarValores();
