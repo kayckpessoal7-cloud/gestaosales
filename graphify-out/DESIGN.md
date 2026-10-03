@@ -1,6 +1,6 @@
 # Design system
 
-Generated: 2026-09-29T23:08:15.445060+00:00
+Generated: 2026-10-03T00:25:38.529951+00:00
 
 ## Tokens
 - --radius-sm: calc(var(--radius) - 4px) (src/styles.css)
@@ -137,6 +137,7 @@ Generated: 2026-09-29T23:08:15.445060+00:00
 - src/components/Logo.tsx
 - src/components/MetaFaturamento.tsx
 - src/components/MovimentacaoDialog.tsx
+- src/components/RelogioCuiaba.tsx
 - src/components/ValorOcultavel.tsx
 - src/components/ui/accordion.tsx
 - src/components/ui/alert-dialog.tsx

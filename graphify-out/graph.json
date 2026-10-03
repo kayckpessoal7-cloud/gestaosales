@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T23:08:15.445060+00:00",
+  "generated_at": "2026-10-03T00:25:38.529951+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -7,7 +7,7 @@
     },
     {
       "path": "AGENTS.md",
-      "bytes": 480
+      "bytes": 663
     },
     {
       "path": "tsconfig.json",
@@ -66,6 +66,10 @@
       "bytes": 60
     },
     {
+      "path": ".lovable/plan/plano-horários-das-movimentações-e-relógio-de-cuiabá-2026-10-03.md",
+      "bytes": 1801
+    },
+    {
       "path": "src/components/Logo.tsx",
       "bytes": 364
     },
@@ -78,12 +82,16 @@
       "bytes": 607
     },
     {
+      "path": "src/components/RelogioCuiaba.tsx",
+      "bytes": 975
+    },
+    {
       "path": "src/components/MovimentacaoDialog.tsx",
-      "bytes": 11485
+      "bytes": 12262
     },
     {
       "path": "src/components/ListaMovimentacoes.tsx",
-      "bytes": 5916
+      "bytes": 6949
     },
     {
       "path": "src/lib/error-page.ts",
@@ -91,7 +99,7 @@
     },
     {
       "path": "src/lib/formato.ts",
-      "bytes": 3730
+      "bytes": 6313
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
@@ -99,7 +107,7 @@
     },
     {
       "path": "src/lib/dados.ts",
-      "bytes": 7695
+      "bytes": 7724
     },
     {
       "path": "src/lib/error-capture.ts",
@@ -147,7 +155,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "bytes": 8740
+      "bytes": 8844
     },
     {
       "path": "src/integrations/supabase/client.ts",
@@ -347,7 +355,7 @@
     },
     {
       "path": "src/routes/_authenticated/historico.tsx",
-      "bytes": 12257
+      "bytes": 12886
     },
     {
       "path": "src/routes/_authenticated/saidas.tsx",
@@ -363,11 +371,11 @@
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
-      "bytes": 4474
+      "bytes": 4700
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
-      "bytes": 22003
+      "bytes": 24019
     },
     {
       "path": "src/routes/_authenticated/entradas.tsx",
@@ -390,12 +398,20 @@
       "bytes": 1666
     },
     {
+      "path": "drizzle/migrations/0004_registrar_horario_movimentacoes.sql",
+      "bytes": 371
+    },
+    {
+      "path": "drizzle/migrations/meta/0004_snapshot.json",
+      "bytes": 336
+    },
+    {
       "path": "drizzle/migrations/meta/0000_snapshot.json",
       "bytes": 336
     },
     {
       "path": "drizzle/migrations/meta/_journal.json",
-      "bytes": 692
+      "bytes": 851
     },
     {
       "path": "drizzle/migrations/meta/0001_snapshot.json",
@@ -565,6 +581,18 @@
     },
     {
       "source": "src/components/ValorOcultavel.tsx",
+      "target": "@/lib/utils"
+    },
+    {
+      "source": "src/components/RelogioCuiaba.tsx",
+      "target": "react"
+    },
+    {
+      "source": "src/components/RelogioCuiaba.tsx",
+      "target": "@/lib/formato"
+    },
+    {
+      "source": "src/components/RelogioCuiaba.tsx",
       "target": "@/lib/utils"
     },
     {
@@ -1674,6 +1702,10 @@
     {
       "source": "src/routes/_authenticated/route.tsx",
       "target": "@/components/Logo"
+    },
+    {
+      "source": "src/routes/_authenticated/route.tsx",
+      "target": "@/components/RelogioCuiaba"
     },
     {
       "source": "src/routes/_authenticated/route.tsx",
