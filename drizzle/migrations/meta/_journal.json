@@ -29,6 +29,13 @@
       "when": 1789861498879,
       "tag": "0003_precos_e_zerar_metricas",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790987059786,
+      "tag": "0004_registrar_horario_movimentacoes",
+      "breakpoints": true
     }
   ]
 }

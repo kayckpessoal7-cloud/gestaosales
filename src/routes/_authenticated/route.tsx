@@ -3,13 +3,7 @@
  * Também monta o layout do sistema (menu lateral no computador
  * e menu inferior no celular).
  */
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  redirect,
-  useRouterState,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
   Eye,
@@ -22,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
+import { RelogioCuiaba } from "@/components/RelogioCuiaba";
 import { useOcultarValores } from "@/hooks/use-ocultar-valores";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -56,6 +51,7 @@ function Layout() {
         <div className="flex flex-col gap-1 px-1 pb-6">
           <Logo className="h-auto w-40" />
           <p className="truncate text-xs text-muted-foreground">Controle financeiro</p>
+          <RelogioCuiaba className="mt-2 text-left" />
         </div>
         <nav className="flex flex-col gap-1">
           {MENU.map((item) => (
@@ -80,7 +76,11 @@ function Layout() {
             onClick={alternar}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
-            {oculto ? <EyeOff className="h-5 w-5 shrink-0" /> : <Eye className="h-5 w-5 shrink-0" />}
+            {oculto ? (
+              <EyeOff className="h-5 w-5 shrink-0" />
+            ) : (
+              <Eye className="h-5 w-5 shrink-0" />
+            )}
             {oculto ? "Mostrar valores" : "Esconder valores"}
           </button>
         </div>
@@ -88,7 +88,8 @@ function Layout() {
 
       {/* Cabeçalho (celular) */}
       <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
-        <Logo className="h-9 w-auto" />
+        <Logo className="h-9 w-auto max-w-[8.75rem]" />
+        <RelogioCuiaba className="ml-auto" />
         <button
           type="button"
           onClick={alternar}

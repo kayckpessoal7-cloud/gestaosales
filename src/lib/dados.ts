@@ -21,6 +21,8 @@ export interface Movimentacao {
   despesa_tipo: TipoDespesa | null;
   recorrente: boolean;
   dia_vencimento: number | null;
+  criado_em: string;
+  hora_informada: boolean;
 }
 
 export interface Categoria {
@@ -54,7 +56,7 @@ export function useMovimentacoes() {
       const { data, error } = await supabase
         .from("movimentacoes")
         .select(
-          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento",
+          "id, tipo, valor, data, categoria, forma_pagamento, descricao, barbeiro_id, despesa_tipo, recorrente, dia_vencimento, criado_em, hora_informada",
         )
         .order("data", { ascending: false })
         .order("criado_em", { ascending: false })
@@ -175,15 +177,7 @@ export function useBarbeiros() {
 export function useSalvarBarbeiro() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      id,
-      nome,
-      comissao,
-    }: {
-      id?: string;
-      nome: string;
-      comissao: number;
-    }) => {
+    mutationFn: async ({ id, nome, comissao }: { id?: string; nome: string; comissao: number }) => {
       if (id) {
         const { error } = await supabase.from("barbeiros").update({ nome, comissao }).eq("id", id);
         if (error) throw error;
