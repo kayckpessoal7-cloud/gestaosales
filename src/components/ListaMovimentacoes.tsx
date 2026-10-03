@@ -95,9 +95,14 @@ export function ListaMovimentacoes({ itens, usarDataRelativa = true }: { itens: 
           >
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold transition-opacity duration-200">{oculto ? "••••••" : m.categoria}</p>
-              <p className="truncate text-xs text-muted-foreground transition-opacity duration-200">
-                {oculto ? "••••••" : `${usarDataRelativa ? formatarDataRelativa(m.data, m.criado_em) : formatarData(m.data, m.criado_em)} · ${m.forma_pagamento}${nomeBarbeiro(m.barbeiro_id) ? ` · ${nomeBarbeiro(m.barbeiro_id)}` : ""}${m.despesa_tipo ? ` · ${m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}` : ""}`}
-              </p>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200">
+                {oculto ? <span>••••••</span> : (
+                  <>
+                    <span className="shrink-0">{usarDataRelativa ? formatarDataRelativa(m.data, m.criado_em) : formatarData(m.data, m.criado_em)}</span>
+                    <span className="truncate">· {m.forma_pagamento}{nomeBarbeiro(m.barbeiro_id) ? ` · ${nomeBarbeiro(m.barbeiro_id)}` : ""}{m.despesa_tipo ? ` · ${m.despesa_tipo === "fixa" ? "Fixa" : "Variável"}` : ""}</span>
+                  </>
+                )}
+              </div>
               {m.descricao && !oculto && (
                 <p className="truncate text-xs text-muted-foreground/80">{m.descricao}</p>
               )}

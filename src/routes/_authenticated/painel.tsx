@@ -515,9 +515,14 @@ function Painel() {
                   <p className={cn("truncate text-sm font-medium transition-opacity duration-200", oculto && "select-none")}>
                     {oculto ? "••••••" : m.categoria}
                   </p>
-                  <p className={cn("truncate text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
-                    {oculto ? "•••• · ••••" : `${formatarDataRelativa(m.data)} · ${m.forma_pagamento}`}
-                  </p>
+                  <div className={cn("flex items-center gap-1 text-xs text-muted-foreground transition-opacity duration-200", oculto && "select-none")}>
+                    {oculto ? <span>•••• · ••••</span> : (
+                      <>
+                        <span className="shrink-0">{formatarDataRelativa(m.data, m.criado_em)}</span>
+                        <span className="truncate">· {m.forma_pagamento}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
                 <span
                   className={cn(
