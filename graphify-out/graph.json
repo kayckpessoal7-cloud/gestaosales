@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T00:35:03.250896+00:00",
+  "generated_at": "2026-10-03T00:39:07.865612+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "bytes": 3070
+      "bytes": 3117
     },
     {
       "path": "components.json",
