@@ -130,6 +130,7 @@ export function MovimentacaoDialog({ aberto, aoFechar, tipo, movimentacao }: Pro
           recorrente: tipoAtual === "saida" ? recorrente : false,
           dia_vencimento:
             tipoAtual === "saida" && recorrente ? Number(diaVencimento) || null : null,
+          criado_em: movimentacao?.criado_em ?? new Date().toISOString(),
         },
       });
       toast.success(

@@ -35,8 +35,8 @@ export function hojeISO(): string {
 
 /** Soma (ou subtrai) dias de uma data no formato aaaa-mm-dd. */
 export function somarDias(dataISO: string, dias: number): string {
-  const d = new Date(`${dataISO}T12:00:00`);
-  d.setDate(d.getDate() + dias);
+  const d = new Date(`${dataISO}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + dias);
   return d.toISOString().slice(0, 10);
 }
 
@@ -47,17 +47,17 @@ export function inicioDoMes(dataISO: string): string {
 
 /** Último dia do mês de uma data aaaa-mm-dd. */
 export function fimDoMes(dataISO: string): string {
-  const d = new Date(`${dataISO.slice(0, 7)}-01T12:00:00`);
-  d.setMonth(d.getMonth() + 1);
-  d.setDate(0);
+  const d = new Date(`${dataISO.slice(0, 7)}-01T12:00:00Z`);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  d.setUTCDate(0);
   return d.toISOString().slice(0, 10);
 }
 
 /** Segunda-feira da semana da data informada. */
 export function inicioDaSemana(dataISO: string): string {
-  const d = new Date(`${dataISO}T12:00:00`);
-  const diaSemana = (d.getDay() + 6) % 7; // 0 = segunda
-  d.setDate(d.getDate() - diaSemana);
+  const d = new Date(`${dataISO}T12:00:00Z`);
+  const diaSemana = (d.getUTCDay() + 6) % 7; // 0 = segunda
+  d.setUTCDate(d.getUTCDate() - diaSemana);
   return d.toISOString().slice(0, 10);
 }
 
