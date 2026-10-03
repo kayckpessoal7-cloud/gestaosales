@@ -96,6 +96,7 @@ export type Database = {
           despesa_tipo: Database["public"]["Enums"]["tipo_despesa"] | null
           dia_vencimento: number | null
           forma_pagamento: string
+          hora_informada: boolean
           id: string
           recorrente: boolean
           tipo: Database["public"]["Enums"]["tipo_movimentacao"]
@@ -111,6 +112,7 @@ export type Database = {
           despesa_tipo?: Database["public"]["Enums"]["tipo_despesa"] | null
           dia_vencimento?: number | null
           forma_pagamento: string
+          hora_informada?: boolean
           id?: string
           recorrente?: boolean
           tipo: Database["public"]["Enums"]["tipo_movimentacao"]
@@ -126,6 +128,7 @@ export type Database = {
           despesa_tipo?: Database["public"]["Enums"]["tipo_despesa"] | null
           dia_vencimento?: number | null
           forma_pagamento?: string
+          hora_informada?: boolean
           id?: string
           recorrente?: boolean
           tipo?: Database["public"]["Enums"]["tipo_movimentacao"]
