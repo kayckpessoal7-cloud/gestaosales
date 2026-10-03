@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T00:33:49.990812+00:00",
+  "generated_at": "2026-10-03T00:35:03.250896+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -91,7 +91,7 @@
     },
     {
       "path": "src/components/ListaMovimentacoes.tsx",
-      "bytes": 5942
+      "bytes": 5941
     },
     {
       "path": "src/lib/error-page.ts",
