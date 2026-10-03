@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-03T00:24:06.298420+00:00",
+  "generated_at": "2026-10-03T00:33:49.990812+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
@@ -70,6 +70,10 @@
       "bytes": 60
     },
     {
+      "path": "src/components/Relogio.tsx",
+      "bytes": 951
+    },
+    {
       "path": "src/components/Logo.tsx",
       "bytes": 364
     },
@@ -83,11 +87,11 @@
     },
     {
       "path": "src/components/MovimentacaoDialog.tsx",
-      "bytes": 11485
+      "bytes": 11742
     },
     {
       "path": "src/components/ListaMovimentacoes.tsx",
-      "bytes": 5916
+      "bytes": 5942
     },
     {
       "path": "src/lib/error-page.ts",
@@ -95,7 +99,7 @@
     },
     {
       "path": "src/lib/formato.ts",
-      "bytes": 3730
+      "bytes": 4492
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
@@ -103,7 +107,7 @@
     },
     {
       "path": "src/lib/dados.ts",
-      "bytes": 7695
+      "bytes": 7772
     },
     {
       "path": "src/lib/error-capture.ts",
@@ -367,7 +371,7 @@
     },
     {
       "path": "src/routes/_authenticated/route.tsx",
-      "bytes": 4474
+      "bytes": 4660
     },
     {
       "path": "src/routes/_authenticated/painel.tsx",
@@ -530,6 +534,10 @@
     {
       "source": "src/start.ts",
       "target": "@/integrations/supabase/auth-attacher"
+    },
+    {
+      "source": "src/components/Relogio.tsx",
+      "target": "react"
     },
     {
       "source": "src/components/Logo.tsx",
@@ -1678,6 +1686,10 @@
     {
       "source": "src/routes/_authenticated/route.tsx",
       "target": "@/components/Logo"
+    },
+    {
+      "source": "src/routes/_authenticated/route.tsx",
+      "target": "@/components/Relogio"
     },
     {
       "source": "src/routes/_authenticated/route.tsx",
