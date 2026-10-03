@@ -1,9 +1,13 @@
 {
-  "generated_at": "2026-10-03T23:12:53.592644+00:00",
+  "generated_at": "2026-10-03T23:35:41.793735+00:00",
   "files": [
     {
       "path": "drizzle.config.ts",
       "bytes": 245
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 2
     },
     {
       "path": "AGENTS.md",
@@ -27,7 +31,7 @@
     },
     {
       "path": "package.json",
-      "bytes": 3117
+      "bytes": 3121
     },
     {
       "path": "components.json",
